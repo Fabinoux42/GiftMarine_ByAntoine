@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4 mois avec Marine 💌</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================================================================
+       ÉCRAN 1 — MOT DE PASSE SECRET (🗝️)
+       Pour changer le mot de passe ou les indices : voir script.js,
+       section "1. CONFIGURATION" (constantes PASSWORD et PASSWORD_HINTS)
+  ================================================================ -->
+  <section id="lock-screen" class="screen active">
+    <div class="card lock-card">
+      <p class="section-icon" aria-hidden="true">🗝️</p>
+      <h1>Avant d'entrer dans le sanctuaire des 4 mois…</h1>
+      <p>Marine doit prouver qu'elle connaît ses classiques (édition surprise).</p>
+      <p class="riddle">
+        « <span id="riddle-text">Je parle peu, je vise juste, je survis trop
+        bien, et mon arbalète a probablement plus de charisme que certains
+        humains. Qui suis-je ?</span> »
+      </p>
+      <form id="lock-form" novalidate>
+        <label for="password-input">Entre le prénom secret</label>
+        <input
+          type="text"
+          id="password-input"
+          name="password"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          required
+        >
+        <button type="submit" class="btn btn-primary">Déverrouiller</button>
+      </form>
+      <p id="lock-feedback" class="lock-feedback" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       JAUGE DE PROGRESSION — "Vive Marine / Vive Amor"
+       Le total s'adapte automatiquement selon le chemin choisi par la
+       roue (avec ou sans le simulateur). Voir script.js → refreshGauge()
+  ================================================================ -->
+  <div
+    id="progress-gauge"
+    class="progress-gauge"
+    role="progressbar"
+    aria-label="Progression de l'aventure"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+  >
+    <div class="gauge-track">
+      <div id="gauge-fill" class="gauge-fill"></div>
+    </div>
+    <span id="gauge-label" class="gauge-label">0%</span>
+  </div>
+
+  <!-- ================================================================
+       MINI ANTO-MAN — petit personnage guide (HTML/CSS uniquement,
+       aucune image externe). La bulle est pilotée par
+       showGuideMessage(texte) dans script.js
+  ================================================================ -->
+  <div id="guide-wrapper" class="guide-wrapper">
+    <div id="guide-bubble" class="guide-speech-bubble" aria-live="polite"></div>
+    <div class="guide-character" aria-hidden="true">
+      <div class="guide-mask">
+        <span class="guide-eye guide-eye-left"></span>
+        <span class="guide-eye guide-eye-right"></span>
+      </div>
+      <span class="guide-mouth"></span>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       BARRE D'OUTILS (haut droite) — afficher/masquer le guide
+       + tout réinitialiser
+  ================================================================ -->
+  <div class="toolbar">
+    <button id="toggle-guide-btn" type="button" class="btn btn-ghost">
+      Masquer Mini Anto-Man
+    </button>
+    <button id="reset-btn" type="button" class="btn btn-ghost" title="Recommencer toute l'expérience depuis le mot de passe">
+      🔄 Recommencer
+    </button>
+  </div>
+
+  <!-- ================================================================
+       PLUIE DE CŒURS (animation finale) — rempli dynamiquement par
+       launchHearts() dans script.js
+  ================================================================ -->
+  <div id="hearts-container" aria-hidden="true"></div>
+
+  <!-- ================================================================
+       CONTENU PRINCIPAL — masqué jusqu'au bon mot de passe
+  ================================================================ -->
+  <div id="main-content" class="hidden">
+
+    <!-- ================= ACCUEIL (💌) ================= -->
+    <section id="section-home" class="screen">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">💌</p>
+        <h1>4 mois avec Marine, aka la queen </h1>
+        <h2 class="subtitle">Un site certifié 100% amour, 12% mauvaise foi, 88% vibes.</h2>
+        <p>
+          Bienvenue dans une expérience web conçue avec amour, humour
+          et une quantité inquiétante de dévotion.
+        </p>
+        <button id="start-btn" type="button" class="btn btn-primary">Commencer l'aventure</button>
+      </div>
+    </section>
+
+    <!-- ================= QUESTION IMPOSSIBLE (💘) ================= -->
+    <section id="section-impossible" class="screen">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">💘</p>
+        <h1>Est-ce que tu veux rester avec moi ?</h1>
+        <div class="impossible-buttons">
+          <button id="yes-btn" type="button" class="btn btn-primary">Oui évidemment</button>
+          <button id="no-btn" type="button" class="btn btn-secondary">Non</button>
+        </div>
+        <p id="impossible-feedback" class="feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ================= ROUE DU DESTIN AMOUREUX (🎡) =================
+         Tourne automatiquement après "Oui évidemment". Détermine si
+         Marine passe par le Simulator ou directement par les quiz.
+         Logique dans script.js → section "10. ROUE DU DESTIN"
+    ================================================================= -->
+    <section id="section-wheel" class="screen">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">🎡</p>
+        <h1>Roue du destin amoureux</h1>
+        <h2 class="subtitle">Choisis ton destin… ou laisse le hasard choisir à ta place.</h2>
+
+        <div class="wheel-area">
+          <div class="wheel-pointer" aria-hidden="true">▼</div>
+          <div class="wheel" id="wheel" aria-hidden="true">
+            <div class="wheel-hub">🎯</div>
+          </div>
+        </div>
+
+        <div class="wheel-legend" aria-hidden="true">
+          <span class="legend-item"><span class="legend-dot legend-dot--sim"></span>Antoine &amp; Marine Simulator</span>
+          <span class="legend-item"><span class="legend-dot legend-dot--quiz"></span>Quiz Direct</span>
+        </div>
+
+        <button id="spin-btn" type="button" class="btn btn-primary">Faire tourner la roue</button>
+        <p id="wheel-result" class="feedback" aria-live="polite"></p>
+        <button id="wheel-continue-btn" type="button" class="btn btn-primary hidden">Continuer</button>
+      </div>
+    </section>
+
+    <!-- ================= ANTOINE & MARINE SIMULATOR (🎮) =================
+         Affiché uniquement si la roue tombe sur "Simulator". Sinon
+         cette section n'est jamais ouverte (Quiz Direct la saute).
+         Contenu dans script.js → "11. SIMULATOR"
+    ====================================================================== -->
+    <section id="section-simulator" class="screen">
+      <div class="card card-wide">
+        <p class="section-icon" aria-hidden="true">🎮</p>
+        <h1>Antoine &amp; Marine Simulator</h1>
+        <h2 class="subtitle">Débloquez ensemble le niveau ultime : Kirikou.</h2>
+
+        <!-- Sélection de personnages -->
+        <div class="character-select">
+
+          <div class="character-card">
+            <div class="character-avatar character-avatar--antoine" aria-hidden="true">
+              <span class="char-eye char-eye-left"></span>
+              <span class="char-eye char-eye-right"></span>
+              <span class="char-mouth"></span>
+            </div>
+            <p class="character-name">Antoine</p>
+            <p class="character-role">Petit artiste</p>
+          </div>
+
+          <div class="character-card">
+            <div class="character-avatar character-avatar--marine" aria-hidden="true">
+              <span class="char-eyebrow"></span>
+              <span class="char-eye char-eye-left"></span>
+              <span class="char-eye char-eye-right"></span>
+              <span class="char-mouth"></span>
+            </div>
+            <p class="character-name">Marine</p>
+            <p class="character-role">Reine du jugement affectueux</p>
+            <p id="marine-bubble" class="character-bubble" aria-live="polite"></p>
+          </div>
+
+          <div class="character-card">
+            <div class="character-avatar character-avatar--kirikou locked" id="kirikou-avatar" aria-hidden="true">🔒</div>
+            <p class="character-name">Kirikou</p>
+            <p class="character-role" id="kirikou-role">Niveau verrouillé</p>
+          </div>
+
+        </div>
+
+        <!-- Jauge Love XP (locale au simulateur) -->
+        <div class="love-xp">
+          <p class="love-xp-label">Love XP : <span id="love-xp-value">0</span> / 6</p>
+          <div class="love-xp-track">
+            <div id="love-xp-fill" class="love-xp-fill"></div>
+          </div>
+        </div>
+
+        <!-- Quêtes — pour ajouter/modifier une quête, voir script.js
+             → SIMULATOR_QUESTS (titres + icônes + répliques associées) -->
+        <ul class="quest-list" id="quest-list">
+          <li class="quest-item" data-quest="quest1">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">🍳</span>
+              <span class="quest-title">Préparer un repas ensemble</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+          <li class="quest-item" data-quest="quest2">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">📺</span>
+              <span class="quest-title">Regarder une série ensemble</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+          <li class="quest-item" data-quest="quest3">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">🎮</span>
+              <span class="quest-title">Jouer aux jeux vidéo</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+          <li class="quest-item" data-quest="quest4">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">🙄</span>
+              <span class="quest-title">Se chamailler pour rien</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+          <li class="quest-item" data-quest="quest5">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">😂</span>
+              <span class="quest-title">Faire rire Marine</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+          <li class="quest-item" data-quest="quest6">
+            <span class="quest-info">
+              <span class="quest-icon" aria-hidden="true">🛋️</span>
+              <span class="quest-title">Câlin sous plaid</span>
+            </span>
+            <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+          </li>
+        </ul>
+
+        <!-- Zone de déblocage de Kirikou — masquée jusqu'à la 6e quête -->
+        <div class="kirikou-unlock hidden" id="kirikou-unlock">
+          <p class="kirikou-unlock-title">✨ Niveau ultime débloqué ✨</p>
+          <ul class="dialogue-list" id="dialogue-list"></ul>
+          <div class="badge" id="badge-chaos">
+            <span class="badge-icon" aria-hidden="true">🏆</span>
+            <span class="badge-text">Badge débloqué : Famille du chaos tendre</span>
+          </div>
+        </div>
+
+        <button id="simulator-continue-btn" type="button" class="btn btn-primary hidden">Continuer l'aventure</button>
+      </div>
+    </section>
+
+    <!-- ================= QUIZ POLITIQUE (🌹) =================
+         Contenu du quiz dans script.js → QUIZZES.politique
+    ========================================================== -->
+    <section id="section-quiz-politique" class="screen" data-quiz="politique">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">🌹</p>
+        <h1>Test de compatibilité </h1>
+        <div class="quiz-container" id="quiz-container-politique"></div>
+      </div>
+    </section>
+
+    <!-- ================= WALKING DEAD CHECKPOINT (🧟) =================
+         Contenu du quiz dans script.js → QUIZZES.twd
+    =================================================================== -->
+    <section id="section-quiz-twd" class="screen" data-quiz="twd">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">🧟</p>
+        <h1>Walking Dead Checkpoint</h1>
+        <div class="quiz-container" id="quiz-container-twd"></div>
+      </div>
+    </section>
+
+    <!-- ================= TEST ITALIEN (🍝) =================
+         Contenu du quiz dans script.js → QUIZZES.italie
+    ======================================================== -->
+    <section id="section-quiz-italie" class="screen" data-quiz="italie">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">🍝</p>
+        <h1>Tu te dis italienne… faisons le test</h1>
+        <div class="quiz-container" id="quiz-container-italie"></div>
+      </div>
+    </section>
+
+    <!-- ================= QUIZ OCÉAN (🌊) =================
+         Contenu du quiz dans script.js → QUIZZES.ocean
+    ====================================================== -->
+    <section id="section-quiz-ocean" class="screen" data-quiz="ocean">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">🌊</p>
+        <h1>Connais-tu Océane ou fais-tu semblant ?</h1>
+        <div class="quiz-container" id="quiz-container-ocean"></div>
+      </div>
+    </section>
+
+    <!-- ================= QUIZ SŒUR (👀) =================
+         Contenu du quiz dans script.js → QUIZZES.soeur
+    ===================================================== -->
+    <section id="section-quiz-soeur" class="screen" data-quiz="soeur">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">👀</p>
+        <h1>Comment ta sœur réagirait ?</h1>
+        <div class="quiz-container" id="quiz-container-soeur"></div>
+      </div>
+    </section>
+
+    <!-- ================= FIN ROMANTIQUE (❤️) =================
+         La mention "au simulateur" n'apparaît que si Marine est
+         passée par le Simulator (voir script.js → goToSection)
+    ========================================================== -->
+    <section id="section-fin" class="screen">
+      <div class="card">
+        <p class="section-icon" aria-hidden="true">❤️</p>
+        <h1>Bravo Marine.</h1>
+        <p>
+          Tu as survécu : aux quiz, aux zombies, à la politique, à
+          l'Italie<span id="fin-simulator-mention">, au simulateur</span> et
+          surtout à Antoine.
+        </p>
+        <p class="final-line">
+          4 mois avec toi, c'est peu sur le calendrier gooo continuer à fond
+        </p>
+        <button id="final-btn" type="button" class="btn btn-primary"> tout ça pour ça ❤️</button>
+        <p id="final-message" class="feedback final-message" aria-live="polite"></p>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
