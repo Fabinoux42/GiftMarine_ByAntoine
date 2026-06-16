@@ -1,0 +1,90 @@
+<!-- ================================================================
+     sections/hangman.html — Le Pendu Kawaï 🎀 (mini-jeu du hub)
+     Données  → js/config.js : HANGMAN_WORDS / HANGMAN_MAX_WRONG
+     Logique  → js/hangman.js
+     Thème    → css/themes/kawaii.css (vire au glauque selon data-dread)
+
+     ⚠️ Le bouton « Retour à la roue » doit TOUJOURS rester visible,
+        que la partie soit gagnée, perdue ou en cours.
+================================================================ -->
+<section id="section-hangman" class="screen">
+    <div class="card hangman-card">
+        <button type="button" class="btn btn-ghost back-to-wheel-btn" data-back-to-wheel>← Retour à la roue</button>
+
+        <p class="section-icon" id="hangman-icon" aria-hidden="true">🎀</p>
+        <h1>Le Pendu Kawaï</h1>
+        <h2 class="subtitle" id="hangman-subtitle">Tout mignon… tant que tu ne te trompes pas.</h2>
+
+        <!-- Dessin du pendu (SVG). Les parties apparaissent au fil des
+             erreurs ; à la défaite, le personnage devient « mort ». -->
+        <div class="hangman-stage">
+            <svg id="hangman-svg" class="hangman-svg" viewBox="0 0 220 240"
+                 xmlns="http://www.w3.org/2000/svg" role="img"
+                 aria-label="Dessin du pendu">
+                <!-- Potence (toujours visible) -->
+                <g class="hm-gallows">
+                    <line class="hm-line" x1="20" y1="226" x2="120" y2="226"/>
+                    <line class="hm-line" x1="48" y1="226" x2="48" y2="18"/>
+                    <line class="hm-line" x1="48" y1="18" x2="140" y2="18"/>
+                    <line class="hm-line" x1="140" y1="18" x2="140" y2="44"/>
+                </g>
+
+                <!-- Partie 1 : tête + visage -->
+                <g class="hm-part" data-stage="1">
+                    <circle class="hm-skin" cx="140" cy="62" r="18"/>
+                    <!-- Visage vivant (kawaï) -->
+                    <g class="hm-face hm-face-alive">
+                        <circle class="hm-eye" cx="133" cy="60" r="2.4"/>
+                        <circle class="hm-eye" cx="147" cy="60" r="2.4"/>
+                        <circle class="hm-cheek" cx="130" cy="67" r="3.2"/>
+                        <circle class="hm-cheek" cx="150" cy="67" r="3.2"/>
+                        <path class="hm-mouth" d="M134 68 Q140 73 146 68" fill="none"/>
+                    </g>
+                    <!-- Visage mort (révélé à la défaite) -->
+                    <g class="hm-face hm-face-dead">
+                        <path class="hm-dead-line" d="M129 56 l6 6 M135 56 l-6 6"/>
+                        <path class="hm-dead-line" d="M145 56 l6 6 M151 56 l-6 6"/>
+                        <path class="hm-mouth" d="M134 71 Q140 66 146 71" fill="none"/>
+                    </g>
+                </g>
+
+                <!-- Partie 2 : corps -->
+                <g class="hm-part" data-stage="2">
+                    <line class="hm-line" x1="140" y1="80" x2="140" y2="136"/>
+                </g>
+                <!-- Partie 3 : bras gauche -->
+                <g class="hm-part" data-stage="3">
+                    <line class="hm-line" x1="140" y1="94" x2="118" y2="114"/>
+                </g>
+                <!-- Partie 4 : bras droit -->
+                <g class="hm-part" data-stage="4">
+                    <line class="hm-line" x1="140" y1="94" x2="162" y2="114"/>
+                </g>
+                <!-- Partie 5 : jambe gauche -->
+                <g class="hm-part" data-stage="5">
+                    <line class="hm-line" x1="140" y1="136" x2="122" y2="166"/>
+                </g>
+                <!-- Partie 6 : jambe droite -->
+                <g class="hm-part" data-stage="6">
+                    <line class="hm-line" x1="140" y1="136" x2="158" y2="166"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Cœurs de vie (se brisent au fil des erreurs) -->
+        <p class="hangman-lives" id="hangman-lives" aria-live="polite"></p>
+
+        <!-- Indice -->
+        <p class="hangman-hint" id="hangman-hint"></p>
+
+        <!-- Mot à deviner (cases) -->
+        <div class="hangman-word" id="hangman-word" aria-live="polite"></div>
+
+        <!-- Clavier A–Z (généré par js/hangman.js) -->
+        <div class="hangman-keyboard" id="hangman-keyboard" role="group" aria-label="Lettres"></div>
+
+        <!-- Résultat + rejouer (le retour à la roue reste toujours dispo) -->
+        <p class="feedback hangman-result" id="hangman-result" aria-live="polite"></p>
+        <button type="button" id="hangman-replay" class="btn btn-primary hidden">🔁 Recommencer le pendu</button>
+    </div>
+</section>

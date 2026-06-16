@@ -57,6 +57,7 @@ function initApp() {
     Impossible.init();  // dépend : DOM section-impossible
     Wheel.init();       // dépend : DOM section-wheel
     Simulator.init();   // dépend : DOM section-simulator
+    Hangman.init();     // dépend : DOM section-hangman
     Ending.init();      // dépend : DOM section-fin
 
     // Thème de base au démarrage (écran mot de passe)

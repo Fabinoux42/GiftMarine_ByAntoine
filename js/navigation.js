@@ -41,6 +41,11 @@ const Navigation = (() => {
             Wheel.onEnterHub();
         }
 
+        // Pendu kawaï : (re)démarre une partie fraîche à chaque entrée.
+        if (sectionId === "section-hangman") {
+            Hangman.onEnter();
+        }
+
         // Lance le quiz si la section en contient un
         const quizKey = target.dataset.quiz;
         if (quizKey) {

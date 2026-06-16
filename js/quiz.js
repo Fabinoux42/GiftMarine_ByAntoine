@@ -125,6 +125,12 @@ const Quiz = (() => {
         container.appendChild(resultText);
         container.appendChild(continueBtn);
 
+        // Quiz Océane terminé → on masque le h3 d'avertissement.
+        if (key === "ocean") {
+            const warning = document.getElementById("quiz-warning");
+            if (warning) warning.style.display = "none";
+        }
+
         Gauge.updateStep(quiz.progressKey);
         Guide.showMessage(GUIDE_MESSAGES.quizDone);
         resultText.focus();
@@ -140,6 +146,12 @@ const Quiz = (() => {
      * @param {string} key - Clé du quiz dans QUIZZES
      */
     function startQuiz(key) {
+        // Le quiz Océane masque son avertissement une fois terminé ; on le
+        // ré-affiche si on rejoue depuis le début.
+        if (key === "ocean") {
+            const warning = document.getElementById("quiz-warning");
+            if (warning) warning.style.display = "";
+        }
         _quizState[key] = {index: 0, wrong: 0};
         _render(key);
     }

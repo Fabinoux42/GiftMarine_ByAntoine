@@ -2,13 +2,14 @@
    WHEEL.JS — Roue du destin amoureux (hub des mini-jeux)
    --------------------------------------------------------------------
    La roue est un HUB : on y revient entre les mini-jeux.
-   Deux mini-jeux obligatoires : "simulator" (40 %) et "quiz" (40 %).
+   Trois mini-jeux obligatoires : "simulator" (30 %), "quiz" (30 %)
+   et "hangman" (le Pendu kawaï, 20 %).
 
    Parcours :
      roue → (spin) → mini-jeu → bouton « Retour à la roue » → roue → …
-     quand les DEUX mini-jeux sont terminés → la roue propose la fin.
+     quand les TROIS mini-jeux sont terminés → la roue propose la fin.
 
-   - _pickResult()  : tire un mini-jeu (le restant s'il n'en reste qu'un)
+   - _pickResult()  : tire un mini-jeu (segment au hasard)
    - onEnterHub()   : (ré)affiche l'état correct à l'entrée sur la roue
 ==================================================================== */
 
@@ -18,17 +19,22 @@ const Wheel = (() => {
         spinArea, hubDone, hubToEndingBtn, statusEl;
     let wheelRotation = 0;
 
-    const LABELS = {simulator: "Antoine & Marine Simulator", quiz: "Quiz"};
+    const LABELS = {
+        simulator: "Antoine & Marine Simulator",
+        quiz: "Quiz",
+        hangman: "Le Pendu Kawaï"
+    };
 
     /* ------------------------------------------------------------------
        Helpers d'état
     ------------------------------------------------------------------ */
 
-    /** Mini-jeux pas encore terminés, parmi "simulator" et "quiz". */
+    /** Mini-jeux pas encore terminés, parmi simulateur, quiz et pendu. */
     function _remainingGames() {
         const remaining = [];
         if (!State.isSimulatorComplete()) remaining.push("simulator");
         if (!State.isQuizComplete()) remaining.push("quiz");
+        if (!State.isHangmanComplete()) remaining.push("hangman");
         return remaining;
     }
 
@@ -127,9 +133,10 @@ const Wheel = (() => {
         spinBtn.classList.replace("btn-secondary", "btn-primary");
 
         // Rappel de ce qu'il reste à terminer pour atteindre la fin.
-        // (La roue, elle, peut retomber sur l'un OU l'autre mini-jeu.)
-        if (remaining.length === 1) {
-            statusEl.textContent = "Il te reste à terminer : " + LABELS[remaining[0]] + " !";
+        // (La roue, elle, peut retomber sur n'importe quel mini-jeu.)
+        if (remaining.length > 0) {
+            statusEl.textContent = "Il te reste à terminer : "
+                + remaining.map((g) => LABELS[g]).join(", ") + " !";
         } else {
             statusEl.textContent = "";
         }
@@ -173,9 +180,13 @@ const Wheel = (() => {
 
         // « Continuer » → on lance le mini-jeu tiré par la roue.
         wheelContinueBtn.addEventListener("click", () => {
-            if (State.getPath() === "simulator") {
+            const path = State.getPath();
+            if (path === "simulator") {
                 Guide.showMessage(GUIDE_MESSAGES.simulatorIntro);
                 Navigation.goToSection("section-simulator");
+            } else if (path === "hangman") {
+                Guide.showMessage(GUIDE_MESSAGES.hangmanIntro);
+                Navigation.goToSection("section-hangman");
             } else {
                 Guide.showMessage(GUIDE_MESSAGES.quizExpress);
                 Navigation.goToSection(_firstIncompleteQuizSection());

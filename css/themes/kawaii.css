@@ -1,0 +1,347 @@
+/* ====================================================================
+   THÈME : kawaii — "Le Pendu Kawaï" (mini-jeu du hub)
+   --------------------------------------------------------------------
+   Activé via body[data-theme="kawaii"] (voir js/theme.js) sur l'écran
+   du pendu.
+
+   PARTICULARITÉ : l'ambiance se dégrade à chaque erreur. js/hangman.js
+   pose body[data-dread="0".."6"] et les paliers ci-dessous font glisser
+   tout l'écran du pastel mignon (0) vers le glauque total (6 = perdu).
+
+   Ce fichier contient AUSSI la mise en page du mini-jeu (clavier, cases,
+   dessin SVG) : seules les COULEURS dépendent du palier de glauque, la
+   structure reste la même.
+==================================================================== */
+
+/* ------------------------------------------------------------------
+   1. MISE EN PAGE DU PENDU (indépendante du palier de glauque)
+------------------------------------------------------------------ */
+.hangman-stage {
+    display: flex;
+    justify-content: center;
+    margin: 0.4rem 0 0.2rem;
+}
+
+.hangman-svg {
+    width: 180px;
+    height: auto;
+}
+
+.hangman-svg .hm-line {
+    stroke: var(--hm-line);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke 0.7s ease;
+}
+
+.hangman-svg .hm-skin {
+    fill: var(--hm-skin);
+    stroke: var(--hm-ink);
+    stroke-width: 3;
+    transition: fill 0.7s ease, stroke 0.7s ease;
+}
+
+.hangman-svg .hm-eye {
+    fill: var(--hm-ink);
+    transition: fill 0.7s ease;
+}
+
+.hangman-svg .hm-cheek {
+    fill: var(--hm-cheek);
+    opacity: 0.85;
+    transition: fill 0.7s ease, opacity 0.7s ease;
+}
+
+.hangman-svg .hm-mouth {
+    stroke: var(--hm-ink);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    transition: stroke 0.7s ease;
+}
+
+.hangman-svg .hm-dead-line {
+    stroke: var(--hm-ink);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+}
+
+/* Parties du corps : invisibles tant qu'elles ne sont pas révélées */
+.hangman-svg .hm-part {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+}
+
+.hangman-svg .hm-part.revealed {
+    opacity: 1;
+}
+
+/* Visage : vivant par défaut, mort à la défaite */
+.hangman-svg .hm-face-dead {
+    display: none;
+}
+
+.hangman-svg.is-dead .hm-face-alive {
+    display: none;
+}
+
+.hangman-svg.is-dead .hm-face-dead {
+    display: block;
+}
+
+.hangman-svg.is-dead {
+    animation: hmDeath 0.6s ease both;
+}
+
+@keyframes hmDeath {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px) rotate(-1deg); }
+    40% { transform: translateX(5px) rotate(1deg); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+/* Cœurs de vie */
+.hangman-lives {
+    font-size: 1.15rem;
+    letter-spacing: 0.18rem;
+    min-height: 1.4em;
+    margin: 0.2rem 0 0.4rem;
+}
+
+/* Indice */
+.hangman-hint {
+    color: var(--color-text-light);
+    font-style: italic;
+    margin: 0.2rem 0 0.7rem;
+}
+
+/* Mot à deviner */
+.hangman-word {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.4rem 0 1rem;
+}
+
+.hm-slot {
+    width: 26px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--color-text);
+    border-bottom: 3px solid var(--color-primary);
+    transition: color 0.7s ease, border-color 0.7s ease;
+}
+
+.hm-slot.space {
+    border-bottom: none;
+    width: 12px;
+}
+
+/* Clavier */
+.hangman-keyboard {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 5px;
+    max-width: 360px;
+    margin: 0 auto 0.7rem;
+}
+
+.hm-key {
+    padding: 0.5rem 0;
+    border: none;
+    border-radius: 9px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    background: var(--color-card);
+    color: var(--color-text);
+    box-shadow: var(--shadow-bubble);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.12s ease;
+}
+
+.hm-key:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.hm-key:disabled {
+    cursor: default;
+    box-shadow: none;
+}
+
+.hm-key.good {
+    background: var(--color-success);
+    color: #fff;
+}
+
+.hm-key.bad {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+.hangman-result {
+    min-height: 1.6em;
+    font-size: 1.05rem;
+}
+
+/* ------------------------------------------------------------------
+   2. PALIER 0 — KAWAÏ TOUT MIGNON (aucune erreur)
+------------------------------------------------------------------ */
+body[data-theme="kawaii"] {
+    --color-primary: #ff8fc7;
+    --color-primary-dark: #ef6fb0;
+    --color-secondary: #b693f0;
+    --color-secondary-dark: #9a73e0;
+    --color-accent: #ffd1ec;
+
+    --color-bg-start: #ffe3f3;
+    --color-bg-end: #ece1ff;
+    --color-card: #fffafd;
+    --color-text: #6b4a63;
+    --color-text-light: #a98aa3;
+    --color-success: #5fcf9e;
+    --color-danger: #ff7aa0;
+    --color-danger-dark: #e7567f;
+
+    --shadow-soft: 0 10px 30px rgba(255, 143, 199, 0.22);
+    --shadow-bubble: 0 6px 16px rgba(155, 90, 130, 0.18);
+
+    /* Couleurs du dessin du pendu */
+    --hm-line: #d9a9cf;
+    --hm-skin: #ffe0ef;
+    --hm-ink: #8a5b7e;
+    --hm-cheek: #ff9ec4;
+
+    transition: background 0.8s ease, color 0.8s ease;
+}
+
+body[data-theme="kawaii"] .card {
+    transition: background 0.8s ease, color 0.8s ease, box-shadow 0.8s ease;
+}
+
+/* ------------------------------------------------------------------
+   3. PALIERS 1 → 6 — DÉGRADATION VERS LE GLAUQUE
+------------------------------------------------------------------ */
+body[data-theme="kawaii"][data-dread="1"] {
+    --color-primary: #f07fb6;
+    --color-secondary: #a98ae6;
+    --color-bg-start: #f7d6ec;
+    --color-bg-end: #ddd0f2;
+    --color-card: #fdf3f9;
+    --color-text: #5f4358;
+    --color-text-light: #9c7d96;
+    --hm-line: #c79bbf;
+    --hm-skin: #fcd6e6;
+    --hm-ink: #7d4f70;
+    --hm-cheek: #f58cb4;
+}
+
+body[data-theme="kawaii"][data-dread="2"] {
+    --color-primary: #cf6fa0;
+    --color-secondary: #9d80cf;
+    --color-bg-start: #eccbe0;
+    --color-bg-end: #ccc2e0;
+    --color-card: #f3eaf1;
+    --color-text: #534455;
+    --color-text-light: #8a7488;
+    --color-success: #57b88f;
+    --color-danger: #e76b8d;
+    --hm-line: #b58aae;
+    --hm-skin: #f0c9da;
+    --hm-ink: #6b4763;
+    --hm-cheek: #e07ba4;
+}
+
+body[data-theme="kawaii"][data-dread="3"] {
+    --color-primary: #a96a93;
+    --color-secondary: #8377b0;
+    --color-bg-start: #cdb9cf;
+    --color-bg-end: #b3aecb;
+    --color-card: #ddd2dc;
+    --color-text: #44394a;
+    --color-text-light: #756b80;
+    --color-success: #4ea585;
+    --color-danger: #d05c7e;
+    --hm-line: #9c7e9c;
+    --hm-skin: #ddbccb;
+    --hm-ink: #59405a;
+    --hm-cheek: #c06f93;
+    --shadow-soft: 0 10px 30px rgba(68, 57, 74, 0.28);
+}
+
+body[data-theme="kawaii"][data-dread="4"] {
+    --color-primary: #8a5a7c;
+    --color-secondary: #6a6090;
+    --color-bg-start: #9c8aa0;
+    --color-bg-end: #847f9c;
+    --color-card: #b3a7b2;
+    --color-text: #2a2330;
+    --color-text-light: #5e5566;
+    --color-success: #46916f;
+    --color-danger: #c0506e;
+    --hm-line: #7d6680;
+    --hm-skin: #b89bab;
+    --hm-ink: #43303f;
+    --hm-cheek: #a05c7c;
+    --shadow-soft: 0 10px 30px rgba(40, 35, 48, 0.4);
+}
+
+body[data-theme="kawaii"][data-dread="5"] {
+    --color-primary: #804a68;
+    --color-secondary: #524a72;
+    --color-bg-start: #5e5566;
+    --color-bg-end: #443f54;
+    --color-card: #6a6072;
+    --color-text: #ede7f0;
+    --color-text-light: #b8aec2;
+    --color-success: #3e7e68;
+    --color-danger: #b04a64;
+    --hm-line: #4f3f56;
+    --hm-skin: #8c7585;
+    --hm-ink: #211a26;
+    --hm-cheek: #7e4860;
+    --shadow-soft: 0 10px 34px rgba(15, 11, 20, 0.55);
+    --shadow-bubble: 0 6px 16px rgba(10, 7, 14, 0.5);
+}
+
+/* Palier 6 = PERDU : glauque total, fond presque noir, accents malsains */
+body[data-theme="kawaii"][data-dread="6"] {
+    --color-primary: #8a3350;
+    --color-primary-dark: #71273f;
+    --color-secondary: #45405a;
+    --color-bg-start: #221d29;
+    --color-bg-end: #14111a;
+    --color-card: #2c2734;
+    --color-text: #d6cfdc;
+    --color-text-light: #8a8294;
+    --color-success: #3a6e5c;
+    --color-danger: #c0354f;
+    --color-danger-dark: #9a2942;
+    --hm-line: #3a3344;
+    --hm-skin: #5d5763;       /* peau drainée, grisâtre */
+    --hm-ink: #0c0a10;
+    --hm-cheek: #5a3a48;
+    --shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.7);
+    --shadow-bubble: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Carte légèrement « malade » à la défaite */
+body[data-theme="kawaii"][data-dread="6"] .hangman-card {
+    box-shadow: 0 0 0 1px rgba(192, 53, 79, 0.4), var(--shadow-soft);
+}
+
+/* Bouton fantôme (« Retour à la roue ») lisible même sur fond sombre */
+body[data-theme="kawaii"][data-dread="5"] .btn-ghost,
+body[data-theme="kawaii"][data-dread="6"] .btn-ghost {
+    background: rgba(20, 16, 26, 0.6);
+    color: #f0e9f4;
+}
+
+body[data-theme="kawaii"][data-dread="5"] .btn-ghost:hover,
+body[data-theme="kawaii"][data-dread="6"] .btn-ghost:hover {
+    background: rgba(20, 16, 26, 0.85);
+}

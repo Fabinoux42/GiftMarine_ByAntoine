@@ -9,6 +9,7 @@
      (aucun / "base") → css/themes/rose-violet.css   (mot de passe, accueil, roue, fin)
      "simulator"      → css/themes/simulator.css      (mini-jeu Simulateur)
      "quiz"           → css/themes/quiz.css           (mini-jeu Quiz)
+     "kawaii"         → css/themes/kawaii.css         (mini-jeu Pendu, vire au glauque)
      "africa"         → css/themes/africa.css         (Simulateur, une fois Kirikou débloqué)
 
    → Appelé par js/navigation.js à chaque changement de section,
@@ -26,6 +27,10 @@ const Theme = (() => {
         if (sectionId === "section-simulator") {
             // Kirikou débloqué → thème Afrique, sinon thème Simulateur.
             return State.isKirikouUnlocked() ? "africa" : "simulator";
+        }
+        if (sectionId === "section-hangman") {
+            // Pendu : thème kawaï (qui vire au glauque selon data-dread).
+            return "kawaii";
         }
         if (typeof sectionId === "string" && sectionId.indexOf("section-quiz-") === 0) {
             return "quiz";

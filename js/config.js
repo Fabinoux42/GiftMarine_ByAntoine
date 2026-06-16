@@ -89,7 +89,12 @@ const GUIDE_MESSAGES = {
     allQuestsDone: "Succès débloqué.",
     kirikouReaction: "Cette conversation a pris une direction inattendue.",
     quizDone: "Marine power loading…",
-    theEnd: "Mission accomplie. Bisous réglementaire."
+    theEnd: "Mission accomplie. Bisous réglementaire.",
+    hangmanIntro: "Mode Pendu Kawaï activé. Reste mignonne, surtout.",
+    hangmanGood: "Jolie lettre. Continue comme ça.",
+    hangmanBad: "Aïe. L'ambiance se charge un peu…",
+    hangmanWin: "Sauvé·e ! La mignonnerie l'emporte.",
+    hangmanLose: "Game over. C'est devenu très glauque, là."
 };
 
 // Message affiché sur l'écran de fin, au clic sur « Merciii pour tout ».
@@ -105,30 +110,62 @@ const KIRIKOU_SOUND = "sounds/KirikouSong.mp3";
 
 /* ------------------------------------------------------------------
    ROUE DU DESTIN
-   6 secteurs de 60° alternant "simulator" et "quiz".
-   Garder un nombre pair pour que le dégradé CSS reste équilibré.
+   6 secteurs de 60° répartis sur les TROIS mini-jeux (chacun ×2).
+   Garder un multiple de 3 pour que le dégradé CSS reste équilibré.
 
-   ⚠️ La roue est désormais un HUB : on y revient entre les mini-jeux.
-   Les deux mini-jeux ("simulator" et "quiz") sont obligatoires ;
-   une fois les deux terminés, la roue propose l'écran de fin.
+   ⚠️ La roue est un HUB : on y revient entre les mini-jeux.
+   Les trois mini-jeux ("simulator", "quiz", "hangman") sont obligatoires ;
+   une fois les trois terminés, la roue propose l'écran de fin.
 ------------------------------------------------------------------ */
-const WHEEL_SEGMENTS = ["simulator", "quiz", "simulator", "quiz", "simulator", "quiz"];
+const WHEEL_SEGMENTS = ["simulator", "quiz", "hangman", "simulator", "quiz", "hangman"];
+
+/* ------------------------------------------------------------------
+   PENDU KAWAÏ — mini-jeu du hub
+   --------------------------------------------------------------------
+   HANGMAN_MAX_WRONG : nombre d'erreurs autorisées. Chaque erreur fait
+   monter d'un cran le « niveau de glauque » (data-dread sur <body>) et
+   dessine une partie du pendu. À la dernière erreur → partie perdue,
+   ambiance totalement glauque, pendu « mort ».
+   ⚠️ Garder 6 : le dessin SVG révèle 6 parties (tête, corps, 2 bras,
+   2 jambes) et le thème kawaii.css gère 6 paliers d'ambiance.
+
+   HANGMAN_WORDS : { word, hint }. Les accents sont ignorés au moment
+   de deviner (on tape A–Z), donc « CALIN » accepte la saisie sans
+   accent. Mettre les mots EN MAJUSCULES.
+------------------------------------------------------------------ */
+const HANGMAN_MAX_WRONG = 6;
+
+const HANGMAN_WORDS = [
+    {word: "MARINE", hint: "La star de toute cette aventure."},
+    {word: "ANTOINE", hint: "Le garçon très, très chanceux."},
+    {word: "KIRIKOU", hint: "Tout petit, un mini Antoine"},
+    {word: "OCEANE", hint: "Celle qui préfèrera SNK à ses enfants dans le futur"},
+    {word: "RICK", hint: "Une très forte ressemblance avec ton père"},
+    {word: "TATOUAGE", hint: "Ce que tu veux faire dès que tu as de l'argent"},
+    {word: "CALIN", hint: "Quand tu me vois, c'est un élément obligatoire !"},
+    {word: "AMOUR", hint: "Le thème central, tout simplement."},
+    {word: "ZOMBIE", hint: "On y a survécu (merci Walking Dead)."},
+    {word: "CARBONARA", hint: "Ce qu'Antoine ne fait pas vraiment en pâte"},
+    {word: "PESTO", hint: "Le plat de ta grand-mère que tu veux me faire"}
+];
 
 /* ------------------------------------------------------------------
    JAUGE DE PROGRESSION — répartition des 100 %
    --------------------------------------------------------------------
      password   → 10 %  (mot secret trouvé)
      impossible → 10 %  (clic sur « Oui »)
-     simulator  → 40 %  (réparti sur les 6 quêtes du simulateur)
-     quiz       → 40 %  (réparti sur les 5 quiz)
+     simulator  → 30 %  (réparti sur les 6 quêtes du simulateur)
+     quiz       → 30 %  (réparti sur les 5 quiz)
+     hangman    → 20 %  (gagné d'un coup quand le pendu est résolu)
    Total = 100 %. Chaque mini-jeu remplit sa part au fur et à mesure.
    → Calcul : js/state.js (State.gaugePercent)
 ------------------------------------------------------------------ */
 const GAUGE_WEIGHTS = {
     password: 10,
     impossible: 10,
-    simulator: 40,
-    quiz: 40
+    simulator: 30,
+    quiz: 30,
+    hangman: 20
 };
 
 /* ------------------------------------------------------------------
@@ -371,12 +408,13 @@ const BASE_STEPS = [
     "password",      // 1. Mot de passe trouvé
     "impossible",    // 2. Question impossible validée
     "wheel",         // 3. Roue tournée
-    "quizPolitique", // 4. Quiz politique terminé
-    "quizTWD",       // 5. Quiz Walking Dead terminé
-    "quizItalie",    // 6. Test italien terminé
-    "quizOcean",     // 7. Quiz Océane terminé
-    "quizSoeur",     // 8. Quiz sœur terminé
-    "fin"            // 9. Fin romantique
+    "hangman",       // 4. Pendu kawaï résolu
+    "quizPolitique", // 5. Quiz politique terminé
+    "quizTWD",       // 6. Quiz Walking Dead terminé
+    "quizItalie",    // 7. Test italien terminé
+    "quizOcean",     // 8. Quiz Océane terminé
+    "quizSoeur",     // 9. Quiz sœur terminé
+    "fin"            // 10. Fin romantique
 ];
 
 // Clé localStorage — changer ici si on veut repartir de zéro côté stockage

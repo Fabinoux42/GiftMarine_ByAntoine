@@ -354,10 +354,10 @@ input:disabled {
             from 0deg,
             var(--color-primary) 0deg 60deg,
             var(--color-secondary) 60deg 120deg,
-            var(--color-primary) 120deg 180deg,
-            var(--color-secondary) 180deg 240deg,
-            var(--color-primary) 240deg 300deg,
-            var(--color-secondary) 300deg 360deg
+            var(--color-tertiary) 120deg 180deg,
+            var(--color-primary) 180deg 240deg,
+            var(--color-secondary) 240deg 300deg,
+            var(--color-tertiary) 300deg 360deg
     );
     transition: transform 4s cubic-bezier(0.17, 0.67, 0.2, 1.02);
 }
@@ -419,6 +419,10 @@ input:disabled {
 
 .legend-dot--quiz {
     background: var(--color-secondary);
+}
+
+.legend-dot--hangman {
+    background: var(--color-tertiary);
 }
 
 /* Hub : message d'état + panneau « tout terminé » */
