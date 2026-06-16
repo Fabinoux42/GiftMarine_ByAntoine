@@ -152,11 +152,25 @@ const QUIZZES = {
             },
             {
                 question: "Le mot préféré de Marine est :",
-                options: ["Et moi je suis Spider-Man.", "Bien sûr", "Je vais t'enculer"]
+                options: ["Et moi je suis Spider-Man.", "Bien sûr", "Je vais t'enculer"],
+                correct: 2,
+                positiveFeedback: "Et en plus ça fait mal.",
+                negativeFeedbacks: [
+                    "MDR tu dis jamais ça.",
+                    "Ah super, donc maintenant on invente une nouvelle Marine.",
+                    "Je pensais que t’étais plus attentive à ton langage fleuri."
+                ]
             },
             {
-                question: "J'ai un truc à te raconter, Marine fera :",
-                options: ["Répond immédiatement.", "Met son plaid.", "Adore les Gossips", "Les trois"]
+                question: "Océan t'envoie : 'J'ai un truc à te raconter.",
+                options: ["Répond immédiatement.", "Met son plaid.", "Adore les Gossips", "Les trois"],
+                correct: 3,
+                positiveFeedback: "Bien sûr que c'est les trois.",
+                negativeFeedbacks: [
+                    "Ah... c'était les trois.",
+                    "Tu savais très bien que c’était les trois, fais pas genre.",
+                    "Le plaid, le gossip, la réponse immédiate… tout était là."
+                ]
             },
             {
                 question: "Face à l'injustice, tu préfères : manif, débat, ou regard noir ultra efficace ?",
@@ -220,23 +234,58 @@ const QUIZZES = {
         questions: [
             {
                 question: "Selon Océane, Mr Faby c’est…",
-                options: ["Un oignon", "Un héros incompris", "Moi", "Toi"]
+                options: ["Un oignon", "Un héros incompris", "Moi", "Toi"],
+                correct: 0,
+                positiveFeedback: "Bah oui c’est logique Marine wake up.",
+                negativeFeedbacks: [
+                    "Ah bah d’accord, tu t’en fous de moi ou quoi ?",
+                    "J’en étais sûre. Tu préfères Antoine, bravo.",
+                    "Tu veux ma mort dès la première question ou comment ça se passe ?"
+                ]
             },
             {
                 question: "Pour Océane, le One Piece c’est…",
-                options: ["Un trésor légendaire", "Une cuisse de poulet (parce qu’elle est noire 👀)", "Une métaphore politique", "Un truc dont tu auras pas la ref donc tu vas choisir poulet"]
+                options: ["Un trésor légendaire", "Une cuisse de poulet (parce qu’elle est noire 👀)", "Une métaphore politique", "Un truc dont tu auras pas la ref donc tu vas choisir poulet"],
+                correct: 1,
+                positiveFeedback: "Ahh bah bravooo c’est raciste même si tu avais raison.",
+                negativeFeedbacks: [
+                    "Ah super, donc maintenant tu fais genre tu connais One Piece.",
+                    "J’en étais sûre, tu m’écoutes pas quand je parle.",
+                    "Tu veux ma mort, c’est confirmé."
+                ]
             },
             {
                 question: "La série préférée d’Océane, c’est…",
-                options: ["South Park", "BoJack Horseman", "The Walking Dead", "Les Feux de l’amour en vrai de vrai"]
+                options: ["South Park", "BoJack Horseman", "The Walking Dead", "Les Feux de l’amour en vrai de vrai"],
+                correct: 0,
+                positiveFeedback: "Tu veux ma mort si tu te trompes.",
+                negativeFeedbacks: [
+                    "Ah bah voilà, tu veux ma mort.",
+                    "J’en étais sûre. Tu préfères Antoine.",
+                    "Ah super, donc mon existence c’est une option maintenant."
+                ]
             },
             {
                 question: "Dans BoJack Horseman, Océane s’identifie le plus à…",
-                options: ["Diane", "Todd", "Princess Carolyn", "BoJack"]
+                options: ["Diane", "Todd", "Princess Carolyn", "BoJack"],
+                correct: 0,
+                positiveFeedback: "D’après TikTok quand tu penses être Diane c’est que t’es BoJack et ça c’est pas cool.",
+                negativeFeedbacks: [
+                    "Ah d’accord, donc tu me connais pas. Super.",
+                    "J’en étais sûre, tu vas dire que je suis Todd maintenant.",
+                    "Okay d'accord, Marine, Okay d'accord"
+                ]
             },
             {
                 question: "Texte à trou :\n\"Tu es pareil que moi, on dirait que je parle à mon miroir…\"",
-                options: ["J’ai enfin un ami noir", "Tu racontes quoi mon reuf ?", "Comme dans Blanche-Neige", "Pas d’inspiration"]
+                options: ["J’ai enfin un ami noir", "Tu racontes quoi mon reuf ?", "Comme dans Blanche-Neige", "Pas d’inspiration"],
+                correct: 0,
+                positiveFeedback: "Tout simplement La La Land en mieux.",
+                negativeFeedbacks: [
+                    "Ah super, donc tu t'en  souviens plus de notre idole.",
+                    "J’en étais sûre, tu préfères Antoine tu m'oublie",
+                    "Tu veux ma mort, mais en comédie musicale."
+                ]
             }
         ]
     },
