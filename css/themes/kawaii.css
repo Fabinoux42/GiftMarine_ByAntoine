@@ -345,3 +345,135 @@ body[data-theme="kawaii"][data-dread="5"] .btn-ghost:hover,
 body[data-theme="kawaii"][data-dread="6"] .btn-ghost:hover {
     background: rgba(20, 16, 26, 0.85);
 }
+
+/* ====================================================================
+   4. AVANCEMENT (Mot X / N)
+==================================================================== */
+.hangman-progress {
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    margin: 0.1rem 0 0.5rem;
+    color: var(--color-text);       /* toujours lisible, clair ou foncé */
+    opacity: 0.85;
+}
+
+/* ====================================================================
+   5. LISIBILITÉ DES TEXTES QUAND L'ÉCRAN DEVIENT SOMBRE
+   --------------------------------------------------------------------
+   Aux derniers paliers le fond passe au sombre : on force des couleurs
+   de texte contrastées (résultat, sous-titre, indice, jauge, bulle).
+==================================================================== */
+
+/* Le message de résultat suit toujours la couleur de texte principale */
+body[data-theme="kawaii"] .hangman-result {
+    color: var(--color-text);
+}
+
+/* La bulle de Mini Anto-Man reste blanche → texte foncé garanti */
+body[data-theme="kawaii"] .guide-speech-bubble {
+    color: #2d2640;
+}
+
+/* Paliers sombres (5 et 6) : sous-titre + indice repassent en clair */
+body[data-theme="kawaii"][data-dread="5"] .subtitle,
+body[data-theme="kawaii"][data-dread="6"] .subtitle {
+    color: #e7d8ec;
+}
+
+body[data-theme="kawaii"][data-dread="5"] .hangman-hint,
+body[data-theme="kawaii"][data-dread="6"] .hangman-hint {
+    color: #cdbed4;
+}
+
+/* Étiquette de la jauge (pourcentage) : pastille sombre + texte clair */
+body[data-theme="kawaii"][data-dread="5"] .gauge-label,
+body[data-theme="kawaii"][data-dread="6"] .gauge-label {
+    background: rgba(18, 14, 24, 0.78);
+    color: #f3edf7;
+}
+
+/* ====================================================================
+   6. MINI ANTO-MAN CHANGE DE TÊTE SELON LES VIES PERDUES
+   --------------------------------------------------------------------
+   Uniquement sous le thème kawaii (ailleurs, le robot reste normal).
+   De plus en plus inquiet… puis carrément « mort » à la défaite.
+==================================================================== */
+
+/* Paliers 2–3 : inquiet → bouche qui s'aplatit */
+body[data-theme="kawaii"][data-dread="2"] .guide-mouth,
+body[data-theme="kawaii"][data-dread="3"] .guide-mouth {
+    height: 0;
+    border-bottom-width: 3px;
+    border-radius: 2px;
+    width: 12px;
+}
+
+/* Paliers 4–5 : anxieux → grimace inversée + corps qui pâlit un peu */
+body[data-theme="kawaii"][data-dread="4"] .guide-mouth,
+body[data-theme="kawaii"][data-dread="5"] .guide-mouth {
+    height: 8px;
+    border-bottom: none;
+    border-top: 3px solid rgba(45, 38, 64, 0.4);
+    border-radius: 50% 50% 0 0;
+}
+
+body[data-theme="kawaii"][data-dread="4"] .guide-eye,
+body[data-theme="kawaii"][data-dread="5"] .guide-eye {
+    height: 11px;          /* yeux un peu écarquillés / tendus */
+}
+
+body[data-theme="kawaii"][data-dread="5"] .guide-character {
+    background: radial-gradient(circle at 35% 30%, #d6b6c4, #b07f93 55%, #8a5870 100%);
+}
+
+/* Palier 6 = MORT : corps grisâtre, plus d'animation, yeux en croix */
+body[data-theme="kawaii"][data-dread="6"] .guide-character {
+    background: radial-gradient(circle at 35% 30%, #b9b2c2, #837c93 55%, #4f4860 100%);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    animation: none;
+    transform: rotate(8deg);    /* tête qui penche, sans vie */
+}
+
+body[data-theme="kawaii"][data-dread="6"] .guide-mask {
+    background: #2a2533;
+}
+
+/* Yeux en croix (X X) : on remplace l'œil blanc par deux barres */
+body[data-theme="kawaii"][data-dread="6"] .guide-eye {
+    background: transparent;
+    overflow: visible;
+}
+
+body[data-theme="kawaii"][data-dread="6"] .guide-eye::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 2.6px;
+    background: #f0eaf4;
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+body[data-theme="kawaii"][data-dread="6"] .guide-eye::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 2.6px;
+    background: #f0eaf4;
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Bouche : petit « o » figé (choc / mort) */
+body[data-theme="kawaii"][data-dread="6"] .guide-mouth {
+    width: 9px;
+    height: 9px;
+    bottom: 11px;
+    border: 2.5px solid rgba(240, 234, 244, 0.75);
+    border-radius: 50%;
+}

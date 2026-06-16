@@ -1,21 +1,24 @@
 /* ====================================================================
    SOUND.JS — Gestion centralisée des sons de l'application
    --------------------------------------------------------------------
-   Pour l'instant un seul son : la musique de Kirikou, jouée au moment
-   où il est débloqué dans le simulateur (js/simulator.js) et stoppée
-   dès qu'on quitte la section (js/navigation.js).
+   Deux sons :
+     - la musique de Kirikou (simulateur) → KIRIKOU_SOUND
+     - le son de mort du Pendu kawaï       → PENDU_MORT_SOUND
 
-   Chemin du fichier → js/config.js : KIRIKOU_SOUND
+   Chemins → js/config.js
 ==================================================================== */
 
 const Sound = (() => {
 
     let kirikou = null;
+    let penduMort = null;
 
-    /** Crée l'élément audio (sans le jouer). Appelé une fois au démarrage. */
+    /** Crée les éléments audio (sans les jouer). Appelé une fois au démarrage. */
     function init() {
         kirikou = new Audio(KIRIKOU_SOUND);
         kirikou.preload = "auto";
+        penduMort = new Audio(PENDU_MORT_SOUND);
+        penduMort.preload = "auto";
     }
 
     /**
@@ -48,6 +51,20 @@ const Sound = (() => {
         }
     }
 
-    return {init, playKirikou, stopKirikou};
+    /** Joue le son de mort du Pendu kawaï (depuis le début). */
+    function playPenduMort() {
+        if (!penduMort) return;
+        try {
+            penduMort.currentTime = 0;
+            const played = penduMort.play();
+            if (played && typeof played.catch === "function") {
+                played.catch(() => { /* lecture refusée : on ignore */ });
+            }
+        } catch (_) {
+            // Audio indisponible : l'expérience continue sans son.
+        }
+    }
+
+    return {init, playKirikou, stopKirikou, playPenduMort};
 
 })();

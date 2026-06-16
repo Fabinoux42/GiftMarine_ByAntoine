@@ -108,6 +108,9 @@ const ENDING_FINAL_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
 ------------------------------------------------------------------ */
 const KIRIKOU_SOUND = "sounds/KirikouSong.mp3";
 
+/* Son joué au moment précis où l'on perd le Pendu kawaï (→ js/hangman.js). */
+const PENDU_MORT_SOUND = "sounds/PenduMort.mp3";
+
 /* ------------------------------------------------------------------
    ROUE DU DESTIN
    6 secteurs de 60° répartis sur les TROIS mini-jeux (chacun ×2).
@@ -122,10 +125,14 @@ const WHEEL_SEGMENTS = ["simulator", "quiz", "hangman", "simulator", "quiz", "ha
 /* ------------------------------------------------------------------
    PENDU KAWAÏ — mini-jeu du hub
    --------------------------------------------------------------------
-   HANGMAN_MAX_WRONG : nombre d'erreurs autorisées. Chaque erreur fait
-   monter d'un cran le « niveau de glauque » (data-dread sur <body>) et
-   dessine une partie du pendu. À la dernière erreur → partie perdue,
-   ambiance totalement glauque, pendu « mort ».
+   Il faut deviner TOUS les mots de HANGMAN_WORDS pour terminer le
+   mini-jeu. Les HANGMAN_MAX_WRONG vies sont PARTAGÉES sur toute la
+   partie : une vie perdue le reste en passant au mot suivant (seul le
+   clavier se réinitialise). Atteindre 0 vie = mort → tout est remis à
+   zéro (mots + vies) si l'on rejoue.
+
+   Chaque erreur fait monter d'un cran le « niveau de glauque »
+   (data-dread sur <body>) et dessine une partie du pendu.
    ⚠️ Garder 6 : le dessin SVG révèle 6 parties (tête, corps, 2 bras,
    2 jambes) et le thème kawaii.css gère 6 paliers d'ambiance.
 
