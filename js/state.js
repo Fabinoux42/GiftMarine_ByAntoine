@@ -7,6 +7,9 @@
 
 const SIMULATOR_QUEST_KEYS = SIMULATOR_QUESTS.map((q) => q.key);
 
+// Clés de progression des quiz (dérivées de QUIZZES, dans l'ordre de définition)
+const QUIZ_PROGRESS_KEYS = Object.values(QUIZZES).map((q) => q.progressKey);
+
 /* ------------------------------------------------------------------
    État interne — ne pas accéder directement depuis d'autres modules
 ------------------------------------------------------------------ */
@@ -50,6 +53,15 @@ const State = {
     /** Retourne true si une étape de progression est complétée. */
     isDone: (key) => !!_state.progress[key],
 
+    /** true quand le mini-jeu Simulateur est terminé (les 6 quêtes faites). */
+    isSimulatorComplete: () => SIMULATOR_QUEST_KEYS.every((key) => _state.progress[key]),
+
+    /** true quand le mini-jeu Quiz est terminé (les 5 quiz faits). */
+    isQuizComplete: () => QUIZ_PROGRESS_KEYS.every((key) => _state.progress[key]),
+
+    /** true quand le mini-jeu Pendu kawaï a été gagné. */
+    isHangmanComplete: () => !!_state.progress.hangman,
+
     /* Setters */
     setUnlocked: (v) => {
         _state.unlocked = v;
@@ -83,23 +95,28 @@ const State = {
         return true;
     },
 
-    /** Calcule le nombre total d'étapes selon le chemin choisi. */
-    totalSteps: () => {
-        return BASE_STEPS.length + (_state.path === "simulator" ? SIMULATOR_QUEST_KEYS.length : 0);
-    },
+    /**
+     * Pourcentage de la jauge globale (0–100), pondéré selon GAUGE_WEIGHTS :
+     *   password 10 % + impossible 10 % + simulateur 30 % + quiz 30 % + pendu 20 %.
+     * Les parts simulateur et quiz se remplissent au prorata des quêtes /
+     * quiz terminés ; le pendu rapporte ses 20 % d'un coup une fois gagné.
+     * @returns {number} pourcentage arrondi
+     */
+    gaugePercent: () => {
+        let percent = 0;
 
-    /** Calcule le nombre d'étapes complétées selon le chemin choisi. */
-    completedSteps: () => {
-        let done = 0;
-        BASE_STEPS.forEach((key) => {
-            if (_state.progress[key]) done++;
-        });
-        if (_state.path === "simulator") {
-            SIMULATOR_QUEST_KEYS.forEach((key) => {
-                if (_state.progress[key]) done++;
-            });
-        }
-        return done;
+        if (_state.progress.password) percent += GAUGE_WEIGHTS.password;
+        if (_state.progress.impossible) percent += GAUGE_WEIGHTS.impossible;
+
+        const questsDone = SIMULATOR_QUEST_KEYS.filter((key) => _state.progress[key]).length;
+        percent += GAUGE_WEIGHTS.simulator * (questsDone / SIMULATOR_QUEST_KEYS.length);
+
+        const quizDone = QUIZ_PROGRESS_KEYS.filter((key) => _state.progress[key]).length;
+        percent += GAUGE_WEIGHTS.quiz * (quizDone / QUIZ_PROGRESS_KEYS.length);
+
+        if (_state.progress.hangman) percent += GAUGE_WEIGHTS.hangman;
+
+        return Math.round(percent);
     },
 
     /* ------------------------------------------------------------------

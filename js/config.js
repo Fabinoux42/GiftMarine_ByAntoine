@@ -89,18 +89,91 @@ const GUIDE_MESSAGES = {
     allQuestsDone: "Succès débloqué.",
     kirikouReaction: "Cette conversation a pris une direction inattendue.",
     quizDone: "Marine power loading…",
-    theEnd: "Mission accomplie. Bisous réglementaire."
+    theEnd: "Mission accomplie. Bisous réglementaire.",
+    hangmanIntro: "En vrai un pendu kawaï ça te dit ? Reste mignonne, surtout.",
+    hangmanGood: "Jolie lettre. Continue, j'ai cru que c'était la lettre Q carrément !.",
+    hangmanBad: "Aïe. Cheh.",
+    hangmanWin: "Sauvé ! On a failli faire une Marion Cotillard et mourir de façon nulle !",
+    hangmanLose: "Game over : sorry BoJack, there is no other side"
 };
 
-// Bannière affichée quand la jauge atteint 100 %
-const GAUGE_COMPLETE_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
+// Message affiché sur l'écran de fin, au clic sur « Merciii pour tout ».
+const ENDING_FINAL_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
+
+/* ------------------------------------------------------------------
+   SON — déblocage de Kirikou
+   Chemin du mp3 joué au moment précis où Kirikou est débloqué
+   dans le simulateur. Le son est stoppé dès qu'on quitte la section.
+   → Logique : js/sound.js (lecture) + js/navigation.js (arrêt)
+------------------------------------------------------------------ */
+const KIRIKOU_SOUND = "sounds/KirikouSong.mp3";
+
+/* Son joué au moment précis où l'on perd le Pendu kawaï (→ js/hangman.js). */
+const PENDU_MORT_SOUND = "sounds/PenduMort.mp3";
 
 /* ------------------------------------------------------------------
    ROUE DU DESTIN
-   6 secteurs de 60° alternant "simulator" et "quiz".
-   Garder un nombre pair pour que le dégradé CSS reste équilibré.
+   6 secteurs de 60° répartis sur les TROIS mini-jeux (chacun ×2).
+   Garder un multiple de 3 pour que le dégradé CSS reste équilibré.
+
+   ⚠️ La roue est un HUB : on y revient entre les mini-jeux.
+   Les trois mini-jeux ("simulator", "quiz", "hangman") sont obligatoires ;
+   une fois les trois terminés, la roue propose l'écran de fin.
 ------------------------------------------------------------------ */
-const WHEEL_SEGMENTS = ["simulator", "quiz", "simulator", "quiz", "simulator", "quiz"];
+const WHEEL_SEGMENTS = ["simulator", "quiz", "hangman", "simulator", "quiz", "hangman"];
+
+/* ------------------------------------------------------------------
+   PENDU KAWAÏ — mini-jeu du hub
+   --------------------------------------------------------------------
+   Il faut deviner TOUS les mots de HANGMAN_WORDS pour terminer le
+   mini-jeu. Les HANGMAN_MAX_WRONG vies sont PARTAGÉES sur toute la
+   partie : une vie perdue le reste en passant au mot suivant (seul le
+   clavier se réinitialise). Atteindre 0 vie = mort → tout est remis à
+   zéro (mots + vies) si l'on rejoue.
+
+   Chaque erreur fait monter d'un cran le « niveau de glauque »
+   (data-dread sur <body>) et dessine une partie du pendu.
+   ⚠️ Garder 6 : le dessin SVG révèle 6 parties (tête, corps, 2 bras,
+   2 jambes) et le thème kawaii.css gère 6 paliers d'ambiance.
+
+   HANGMAN_WORDS : { word, hint }. Les accents sont ignorés au moment
+   de deviner (on tape A–Z), donc « CALIN » accepte la saisie sans
+   accent. Mettre les mots EN MAJUSCULES.
+------------------------------------------------------------------ */
+const HANGMAN_MAX_WRONG = 6;
+
+const HANGMAN_WORDS = [
+    {word: "MARINE", hint: "La star de toute cette aventure."},
+    {word: "ANTOINE", hint: "Le garçon très, très chanceux."},
+    {word: "KIRIKOU", hint: "Tout petit, un mini Antoine"},
+    {word: "OCEANE", hint: "Celle qui préfèrera SNK à ses enfants dans le futur"},
+    {word: "RICK", hint: "Une très forte ressemblance avec ton père"},
+    {word: "TATOUAGE", hint: "Ce que tu veux faire dès que tu as de l'argent"},
+    {word: "CALIN", hint: "Quand tu me vois, c'est un élément obligatoire !"},
+    {word: "AMOUR", hint: "Le thème central, tout simplement."},
+    {word: "ZOMBIE", hint: "Dans the walking dead, on dirait qu'il est lent ce lait"},
+    {word: "CARBONARA", hint: "Ce qu'Antoine ne fait pas vraiment en pâte"},
+    {word: "PESTO", hint: "Le plat de ta grand-mère que tu veux me faire"}
+];
+
+/* ------------------------------------------------------------------
+   JAUGE DE PROGRESSION — répartition des 100 %
+   --------------------------------------------------------------------
+     password   → 10 %  (mot secret trouvé)
+     impossible → 10 %  (clic sur « Oui »)
+     simulator  → 30 %  (réparti sur les 6 quêtes du simulateur)
+     quiz       → 30 %  (réparti sur les 5 quiz)
+     hangman    → 20 %  (gagné d'un coup quand le pendu est résolu)
+   Total = 100 %. Chaque mini-jeu remplit sa part au fur et à mesure.
+   → Calcul : js/state.js (State.gaugePercent)
+------------------------------------------------------------------ */
+const GAUGE_WEIGHTS = {
+    password: 10,
+    impossible: 10,
+    simulator: 30,
+    quiz: 30,
+    hangman: 20
+};
 
 /* ------------------------------------------------------------------
    SIMULATEUR — quêtes
@@ -136,8 +209,25 @@ const KIRIKOU_DIALOGUE = [
 
 /* ------------------------------------------------------------------
    QUIZ
-   Pour ajouter / retirer une question : modifier le tableau "questions".
-   Toutes les réponses sont valides (c'est pour le fun !).
+   --------------------------------------------------------------------
+   Deux types de questions :
+
+   1) Question « pour le fun » — toutes les réponses sont valides,
+      n'importe quel clic passe à la suite :
+        { question: "…", options: ["A", "B", "C"] }
+
+   2) Question « à bonne réponse » — ajouter ces 3 champs :
+        correct:           index (0 = 1ʳᵉ option) de la bonne réponse
+        positiveFeedback:  ce que dit Mini Anto-Man si c'est juste
+        negativeFeedbacks: tableau de répliques en cas d'erreur
+                           (1ʳᵉ erreur → [0], 2ᵉ erreur → [1], …)
+
+      Comportement : si la réponse est bonne → Mini Anto-Man dit le
+      positiveFeedback puis on passe à la question suivante. Si elle est
+      fausse → le bouton choisi devient rouge, Mini Anto-Man dit le
+      negativeFeedback correspondant, et on reste sur la question pour
+      laisser choisir une autre réponse.
+   → Moteur : js/quiz.js
 ------------------------------------------------------------------ */
 const QUIZZES = {
 
@@ -152,11 +242,25 @@ const QUIZZES = {
             },
             {
                 question: "Le mot préféré de Marine est :",
-                options: ["Et moi je suis Spider-Man.", "Bien sûr", "Je vais t'enculer"]
+                options: ["Et moi je suis Spider-Man.", "Bien sûr", "Je vais t'enculer"],
+                correct: 2,
+                positiveFeedback: "Et en plus ça fait mal.",
+                negativeFeedbacks: [
+                    "MDR tu dis jamais ça.",
+                    "Ah super, donc maintenant on invente une nouvelle Marine.",
+                    "Je pensais que t’étais plus attentive à ton langage fleuri."
+                ]
             },
             {
-                question: "J'ai un truc à te raconter, Marine fera :",
-                options: ["Répond immédiatement.", "Met son plaid.", "Adore les Gossips", "Les trois"]
+                question: "Océan t'envoie : 'J'ai un truc à te raconter.",
+                options: ["Répond immédiatement.", "Met son plaid.", "Adore les Gossips", "Les trois"],
+                correct: 3,
+                positiveFeedback: "Bien sûr que c'est les trois.",
+                negativeFeedbacks: [
+                    "Ah... c'était les trois.",
+                    "Tu savais très bien que c’était les trois, fais pas genre.",
+                    "Le plaid, le gossip, la réponse immédiate… tout était là."
+                ]
             },
             {
                 question: "Face à l'injustice, tu préfères : manif, débat, ou regard noir ultra efficace ?",
@@ -192,7 +296,7 @@ const QUIZZES = {
     italie: {
         progressKey: "quizItalie",
         next: "section-quiz-ocean",
-        result: "Marine est italienne à 94%. Les 6% restants sont probablement du grognichon. 🍝",
+        result: "Marine est italienne à 94%. Les 6% restants sont probablement du grosnichon. 🍝",
         questions: [
             {
                 question: "La vraie carbonara contient-elle de la crème ?",
@@ -220,34 +324,69 @@ const QUIZZES = {
         questions: [
             {
                 question: "Selon Océane, Mr Faby c’est…",
-                options: ["Un oignon", "Un héros incompris", "Moi", "Toi"]
+                options: ["Un oignon", "Un héros incompris", "Moi", "Toi"],
+                correct: 0,
+                positiveFeedback: "Bah oui c’est logique Marine wake up.",
+                negativeFeedbacks: [
+                    "Ah bah d’accord, tu t’en fous de moi ou quoi ?",
+                    "J’en étais sûre. Tu préfères Antoine, bravo.",
+                    "Tu veux ma mort dès la première question ou comment ça se passe ?"
+                ]
             },
             {
                 question: "Pour Océane, le One Piece c’est…",
-                options: ["Un trésor légendaire", "Une cuisse de poulet (parce qu’elle est noire 👀)", "Une métaphore politique", "Un truc dont tu auras pas la ref donc tu vas choisir poulet"]
+                options: ["Un trésor légendaire", "Une cuisse de poulet (parce qu’elle est noire 👀)", "Une métaphore politique", "Un truc dont tu auras pas la ref donc tu vas choisir poulet"],
+                correct: 1,
+                positiveFeedback: "Ahh bah bravooo c’est raciste même si tu avais raison.",
+                negativeFeedbacks: [
+                    "Ah super, donc maintenant tu fais genre tu connais One Piece.",
+                    "J’en étais sûre, tu m’écoutes pas quand je parle.",
+                    "Tu veux ma mort, c’est confirmé."
+                ]
             },
             {
                 question: "La série préférée d’Océane, c’est…",
-                options: ["South Park", "BoJack Horseman", "The Walking Dead", "Les Feux de l’amour en vrai de vrai"]
+                options: ["South Park", "BoJack Horseman", "The Walking Dead", "Les Feux de l’amour en vrai de vrai"],
+                correct: 0,
+                positiveFeedback: "Tu veux ma mort si tu te trompes.",
+                negativeFeedbacks: [
+                    "Ah bah voilà, tu veux ma mort.",
+                    "J’en étais sûre. Tu préfères Antoine.",
+                    "Ah super, donc mon existence c’est une option maintenant."
+                ]
             },
             {
                 question: "Dans BoJack Horseman, Océane s’identifie le plus à…",
-                options: ["Diane", "Todd", "Princess Carolyn", "BoJack"]
+                options: ["Diane", "Todd", "Princess Carolyn", "BoJack"],
+                correct: 0,
+                positiveFeedback: "D’après TikTok quand tu penses être Diane c’est que t’es BoJack et ça c’est pas cool.",
+                negativeFeedbacks: [
+                    "Ah d’accord, donc tu me connais pas. Super.",
+                    "J’en étais sûre, tu vas dire que je suis Todd maintenant.",
+                    "Okay d'accord, Marine, Okay d'accord"
+                ]
             },
             {
                 question: "Texte à trou :\n\"Tu es pareil que moi, on dirait que je parle à mon miroir…\"",
-                options: ["J’ai enfin un ami noir", "Tu racontes quoi mon reuf ?", "Comme dans Blanche-Neige", "Pas d’inspiration"]
+                options: ["J’ai enfin un ami noir", "Tu racontes quoi mon reuf ?", "Comme dans Blanche-Neige", "Pas d’inspiration"],
+                correct: 0,
+                positiveFeedback: "Tout simplement La La Land en mieux.",
+                negativeFeedbacks: [
+                    "Ah super, donc tu t'en  souviens plus de notre idole.",
+                    "J’en étais sûre, tu préfères Antoine tu m'oublie",
+                    "Tu veux ma mort, mais en comédie musicale."
+                ]
             }
         ]
     },
 
     soeur: {
         progressKey: "quizSoeur",
-        next: "section-fin",
+        next: "section-wheel", // dernier quiz → retour au hub (la roue décide de la fin)
         result: "Sœur radar activé. Rien ne lui échappe. 👀",
         questions: [
             {
-                question: "Marine dit qu'elle n'est pas grognichon.",
+                question: "Marine dit qu'elle n'est pas grosnichon.",
                 options: ["Elle juge en silence", "Elle rigole", "Elle expose la vérité", "Elle appelle Océane en renfort"]
             },
             {
@@ -276,12 +415,13 @@ const BASE_STEPS = [
     "password",      // 1. Mot de passe trouvé
     "impossible",    // 2. Question impossible validée
     "wheel",         // 3. Roue tournée
-    "quizPolitique", // 4. Quiz politique terminé
-    "quizTWD",       // 5. Quiz Walking Dead terminé
-    "quizItalie",    // 6. Test italien terminé
-    "quizOcean",     // 7. Quiz Océane terminé
-    "quizSoeur",     // 8. Quiz sœur terminé
-    "fin"            // 9. Fin romantique
+    "hangman",       // 4. Pendu kawaï résolu
+    "quizPolitique", // 5. Quiz politique terminé
+    "quizTWD",       // 6. Quiz Walking Dead terminé
+    "quizItalie",    // 7. Test italien terminé
+    "quizOcean",     // 8. Quiz Océane terminé
+    "quizSoeur",     // 9. Quiz sœur terminé
+    "fin"            // 10. Fin romantique
 ];
 
 // Clé localStorage — changer ici si on veut repartir de zéro côté stockage

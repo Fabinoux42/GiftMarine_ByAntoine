@@ -1,0 +1,39 @@
+/* ====================================================================
+   THÈME : simulator — "violet électrique" (mini-jeu Simulateur)
+   --------------------------------------------------------------------
+   Activé via body[data-theme="simulator"] (voir js/theme.js) lorsqu'on
+   entre dans le simulateur depuis la roue, tant que Kirikou n'est pas
+   débloqué.
+
+   Identité PROPRE au simulateur : violet dominant (≠ rose du thème de
+   base, ≠ orange du thème quiz). Violet électrique + fuchsia, avec un
+   pop cyan pour les accents → ambiance "console néon".
+
+   Seules les variables qui changent sont redéfinies : les autres
+   héritent du thème de base (rose-violet.css).
+==================================================================== */
+
+body[data-theme="simulator"] {
+    /* Couleurs principales — violet dominant, fuchsia en secondaire */
+    --color-primary: #7c3aed;        /* violet électrique (boutons principaux) */
+    --color-primary-dark: #6324d1;
+    --color-secondary: #c026d3;      /* fuchsia / magenta */
+    --color-secondary-dark: #a31bb2;
+    --color-accent: #18c8e0;         /* cyan — pop qui tranche avec le violet */
+
+    /* Fond — dégradé lilas → lavande (franchement violet, aucun rose) */
+    --color-bg-start: #efe6ff;       /* lilas clair */
+    --color-bg-end: #ddd1ff;         /* lavande soutenue */
+
+    /* Surfaces & texte */
+    --color-card: #ffffff;
+    --color-text: #2a1b4d;           /* indigo-prune foncé */
+    --color-text-light: #6b5b95;
+    --color-success: #2bb673;
+    --color-danger: #e74c5e;
+    --color-danger-dark: #c0392f;
+
+    /* Ombres teintées violet */
+    --shadow-soft: 0 10px 30px rgba(124, 58, 237, 0.22);
+    --shadow-bubble: 0 6px 18px rgba(42, 27, 77, 0.22);
+}

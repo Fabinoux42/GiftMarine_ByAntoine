@@ -1,14 +1,63 @@
 /* ====================================================================
-   WHEEL.JS — Roue du destin amoureux
+   WHEEL.JS — Roue du destin amoureux (hub des mini-jeux)
+   --------------------------------------------------------------------
+   La roue est un HUB : on y revient entre les mini-jeux.
+   Trois mini-jeux obligatoires : "simulator" (30 %), "quiz" (30 %)
+   et "hangman" (le Pendu kawaï, 20 %).
+
+   Parcours :
+     roue → (spin) → mini-jeu → bouton « Retour à la roue » → roue → …
+     quand les TROIS mini-jeux sont terminés → la roue propose la fin.
+
+   - _pickResult()  : tire un mini-jeu (segment au hasard)
+   - onEnterHub()   : (ré)affiche l'état correct à l'entrée sur la roue
 ==================================================================== */
 
 const Wheel = (() => {
 
-    let wheelEl, spinBtn, wheelResultEl, wheelContinueBtn;
+    let wheelEl, spinBtn, wheelResultEl, wheelContinueBtn,
+        spinArea, hubDone, hubToEndingBtn, statusEl;
     let wheelRotation = 0;
 
+    const LABELS = {
+        simulator: "Antoine & Marine Simulator",
+        quiz: "Quiz",
+        hangman: "Le Pendu Kawaï"
+    };
+
+    /* ------------------------------------------------------------------
+       Helpers d'état
+    ------------------------------------------------------------------ */
+
+    /** Mini-jeux pas encore terminés, parmi simulateur, quiz et pendu. */
+    function _remainingGames() {
+        const remaining = [];
+        if (!State.isSimulatorComplete()) remaining.push("simulator");
+        if (!State.isQuizComplete()) remaining.push("quiz");
+        if (!State.isHangmanComplete()) remaining.push("hangman");
+        return remaining;
+    }
+
+    /** Section du premier quiz non terminé (pour reprendre la chaîne). */
+    function _firstIncompleteQuizSection() {
+        const keys = Object.keys(QUIZZES);
+        for (const key of keys) {
+            if (!State.isDone(QUIZZES[key].progressKey)) return "section-quiz-" + key;
+        }
+        return "section-quiz-" + keys[0];
+    }
+
+    /* ------------------------------------------------------------------
+       Tirage
+    ------------------------------------------------------------------ */
+
+    /**
+     * Tire un mini-jeu AU HASARD parmi les deux, même si l'un est déjà
+     * terminé : on doit pouvoir retourner sur la page tirée par la roue,
+     * finie ou non. (Le panneau « fin » n'apparaît que lorsque les DEUX
+     * mini-jeux sont réellement terminés — voir onEnterHub.)
+     */
     function _pickResult() {
-        if (State.getSpinCount() >= 2 && !State.isSimulatorSeen()) return "simulator";
         return WHEEL_SEGMENTS[Math.floor(Math.random() * WHEEL_SEGMENTS.length)];
     }
 
@@ -18,6 +67,10 @@ const Wheel = (() => {
             .filter((i) => i !== -1);
         return matches[Math.floor(Math.random() * matches.length)];
     }
+
+    /* ------------------------------------------------------------------
+       Spin
+    ------------------------------------------------------------------ */
 
     function _performSpin() {
         if (spinBtn.disabled) return;
@@ -33,67 +86,119 @@ const Wheel = (() => {
         const segAngle = 360 / WHEEL_SEGMENTS.length;
         const targetIndex = _pickTargetIndex(result);
         const center = targetIndex * segAngle + segAngle / 2;
-        const jitter = (Math.random() * segAngle * 0.6) - (segAngle * 0.3);
+        // Jitter borné à ±0,25 secteur : l'arrêt reste naturel mais le
+        // pointeur tombe toujours bien à l'intérieur du secteur (jamais
+        // sur une bordure).
+        const jitter = (Math.random() * segAngle * 0.5) - (segAngle * 0.25);
         const extraSpins = 5 + Math.floor(Math.random() * 3);
 
-        wheelRotation += extraSpins * 360 + (360 - center) + jitter;
+        // La roue accumule ses rotations d'un spin à l'autre. Il faut donc
+        // viser l'orientation FINALE à partir de l'orientation ACTUELLE,
+        // sinon seul le tout premier spin tombe au bon endroit (les suivants
+        // étaient décalés → le pointeur affichait un autre secteur que le
+        // résultat annoncé).
+        const landingAngle = center + jitter;                         // angle local visé sous le pointeur
+        const targetMod = ((360 - landingAngle) % 360 + 360) % 360;   // orientation finale (mod 360)
+        const currentMod = ((wheelRotation % 360) + 360) % 360;       // orientation actuelle (mod 360)
+        let delta = targetMod - currentMod;
+        if (delta <= 0) delta += 360;                                 // toujours tourner vers l'avant
+
+        wheelRotation += extraSpins * 360 + delta;
         wheelEl.style.transform = "rotate(" + wheelRotation + "deg)";
         setTimeout(() => _revealResult(result), 4300);
     }
 
     function _revealResult(result) {
         State.setPath(result);
-        Gauge.updateStep("wheel");
-        Guide.showMessage(GUIDE_MESSAGES.wheelResult);
-        const label = (result === "simulator") ? "Antoine & Marine Simulator" : "Quiz Direct";
-        wheelResultEl.textContent = "🎉 La roue s'arrête sur : " + label + " !";
-        wheelContinueBtn.classList.remove("hidden");
-        spinBtn.disabled = false;
-        spinBtn.textContent = "🎲 Relancer la roue";
-        spinBtn.classList.replace("btn-primary", "btn-secondary");
+        State.markDone("wheel"); // simple marqueur "roue lancée"
         State.save();
-    }
-
-    function restoreInstant() {
-        const segAngle = 360 / WHEEL_SEGMENTS.length;
-        const idx = WHEEL_SEGMENTS.indexOf(State.getPath());
-        const center = idx >= 0 ? (idx * segAngle + segAngle / 2) : 0;
-        const rot = 360 - center;
-
-        wheelEl.style.transition = "none";
-        wheelEl.style.transform = "rotate(" + rot + "deg)";
-        wheelRotation = rot;
-        requestAnimationFrame(() => {
-            wheelEl.style.transition = "";
-        });
-
-        const label = (State.getPath() === "simulator") ? "Antoine & Marine Simulator" : "Quiz Direct";
-        wheelResultEl.textContent = "🎉 La roue s'arrête sur : " + label + " !";
+        Guide.showMessage(GUIDE_MESSAGES.wheelResult);
+        wheelResultEl.textContent = "🎉 La roue s'arrête sur : " + LABELS[result] + " !";
         wheelContinueBtn.classList.remove("hidden");
         spinBtn.disabled = false;
         spinBtn.textContent = "🎲 Relancer la roue";
         spinBtn.classList.replace("btn-primary", "btn-secondary");
     }
+
+    /* ------------------------------------------------------------------
+       Hub — état à l'entrée sur la roue
+    ------------------------------------------------------------------ */
+
+    /** Réinitialise la zone de spin pour un nouveau tirage. */
+    function _resetSpinArea(remaining) {
+        wheelContinueBtn.classList.add("hidden");
+        wheelResultEl.textContent = "";
+        spinBtn.disabled = false;
+        spinBtn.textContent = "🎲 Faire tourner la roue";
+        spinBtn.classList.replace("btn-secondary", "btn-primary");
+
+        // Rappel de ce qu'il reste à terminer pour atteindre la fin.
+        // (La roue, elle, peut retomber sur n'importe quel mini-jeu.)
+        if (remaining.length > 0) {
+            statusEl.textContent = "Il te reste à terminer : "
+                + remaining.map((g) => LABELS[g]).join(", ") + " !";
+        } else {
+            statusEl.textContent = "";
+        }
+    }
+
+    /**
+     * (Ré)affiche l'état correct du hub :
+     *  - les deux mini-jeux faits → panneau « fin »
+     *  - sinon → zone de spin prête pour le(s) mini-jeu(x) restant(s)
+     * Appelé par Navigation.goToSection() à chaque entrée sur la roue.
+     */
+    function onEnterHub() {
+        const remaining = _remainingGames();
+
+        if (remaining.length === 0) {
+            spinArea.classList.add("hidden");
+            hubDone.classList.remove("hidden");
+            return;
+        }
+
+        hubDone.classList.add("hidden");
+        spinArea.classList.remove("hidden");
+        _resetSpinArea(remaining);
+    }
+
+    /* ------------------------------------------------------------------
+       Init
+    ------------------------------------------------------------------ */
 
     function init() {
         wheelEl = document.getElementById("wheel");
         spinBtn = document.getElementById("spin-btn");
         wheelResultEl = document.getElementById("wheel-result");
         wheelContinueBtn = document.getElementById("wheel-continue-btn");
+        spinArea = document.getElementById("wheel-spin-area");
+        hubDone = document.getElementById("wheel-hub-done");
+        hubToEndingBtn = document.getElementById("wheel-to-ending-btn");
+        statusEl = document.getElementById("wheel-status");
 
         spinBtn.addEventListener("click", _performSpin);
 
+        // « Continuer » → on lance le mini-jeu tiré par la roue.
         wheelContinueBtn.addEventListener("click", () => {
-            if (State.getPath() === "simulator") {
+            const path = State.getPath();
+            if (path === "simulator") {
                 Guide.showMessage(GUIDE_MESSAGES.simulatorIntro);
                 Navigation.goToSection("section-simulator");
+            } else if (path === "hangman") {
+                Guide.showMessage(GUIDE_MESSAGES.hangmanIntro);
+                Navigation.goToSection("section-hangman");
             } else {
                 Guide.showMessage(GUIDE_MESSAGES.quizExpress);
-                Navigation.goToSection("section-quiz-politique");
+                Navigation.goToSection(_firstIncompleteQuizSection());
             }
+        });
+
+        // Panneau « tout terminé » → écran de fin.
+        hubToEndingBtn.addEventListener("click", () => {
+            Navigation.goToSection("section-fin");
         });
     }
 
-    return {init, restoreInstant};
+    return {init, onEnterHub};
 
 })();

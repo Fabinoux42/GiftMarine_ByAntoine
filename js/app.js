@@ -50,13 +50,34 @@ function loadIncludes() {
 function initApp() {
 
     // Initialisation des modules dans l'ordre des dépendances
+    Sound.init();       // crée l'élément audio (Kirikou)
     Gauge.init();       // dépend : State
     Guide.init();       // dépend : DOM chrome
     Password.init();    // dépend : DOM lock-screen
     Impossible.init();  // dépend : DOM section-impossible
     Wheel.init();       // dépend : DOM section-wheel
     Simulator.init();   // dépend : DOM section-simulator
+    Hangman.init();     // dépend : DOM section-hangman
     Ending.init();      // dépend : DOM section-fin
+
+    // Thème de base au démarrage (écran mot de passe)
+    Theme.apply("lock-screen");
+
+    // Petit « tic » synthétisé à chaque clic sur un bouton (délégation :
+    // couvre aussi les boutons créés dynamiquement, comme le clavier du
+    // pendu ou les options de quiz).
+    // OPTIMISATION LATENCE : On écoute 'pointerdown' (ou 'mousedown') au lieu de 'click'
+    document.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("button")) {
+            // Ajuste ici selon si ta fonction est globale ou dans un objet "Sound"
+            Sound.playClick();
+        }
+    });
+
+    // Boutons « Retour à la roue » des mini-jeux (simulateur + quiz)
+    document.querySelectorAll("[data-back-to-wheel]").forEach((btn) => {
+        btn.addEventListener("click", () => Navigation.goToSection("section-wheel"));
+    });
 
     // Bouton "Recommencer"
     document.getElementById("reset-btn").addEventListener("click", () => {
@@ -76,7 +97,8 @@ function initApp() {
         ? data.currentSection
         : "section-home";
 
-    if (target === "section-wheel" && State.isDone("wheel")) Wheel.restoreInstant();
+    // Le simulateur restaure ses quêtes / Kirikou ; la roue (hub) gère
+    // elle-même son affichage via Wheel.onEnterHub() dans goToSection().
     if (target === "section-simulator") Simulator.restore();
 
     Navigation.goToSection(target);
