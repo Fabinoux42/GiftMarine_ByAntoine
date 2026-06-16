@@ -63,6 +63,17 @@ function initApp() {
     // Thème de base au démarrage (écran mot de passe)
     Theme.apply("lock-screen");
 
+    // Petit « tic » synthétisé à chaque clic sur un bouton (délégation :
+    // couvre aussi les boutons créés dynamiquement, comme le clavier du
+    // pendu ou les options de quiz).
+    // OPTIMISATION LATENCE : On écoute 'pointerdown' (ou 'mousedown') au lieu de 'click'
+    document.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("button")) {
+            // Ajuste ici selon si ta fonction est globale ou dans un objet "Sound"
+            Sound.playClick();
+        }
+    });
+
     // Boutons « Retour à la roue » des mini-jeux (simulateur + quiz)
     document.querySelectorAll("[data-back-to-wheel]").forEach((btn) => {
         btn.addEventListener("click", () => Navigation.goToSection("section-wheel"));
