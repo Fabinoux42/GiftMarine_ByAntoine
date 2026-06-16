@@ -1,0 +1,35 @@
+/* ====================================================================
+   THÈME : simulator — "arcade rétro-gaming" (mini-jeu Simulateur)
+   --------------------------------------------------------------------
+   Activé via body[data-theme="simulator"] (voir js/theme.js) lorsqu'on
+   entre dans le simulateur depuis la roue, tant que Kirikou n'est pas
+   débloqué. Palette bleu/indigo + teal + ambre sur fond clair.
+
+   Seules les variables qui changent sont redéfinies : les autres
+   héritent du thème de base (rose-violet.css).
+==================================================================== */
+
+body[data-theme="simulator"] {
+    /* Couleurs principales — vibe console / néon doux */
+    --color-primary: #5b6ef5; /* indigo électrique */
+    --color-primary-dark: #3f51d4;
+    --color-secondary: #00b3b3; /* teal */
+    --color-secondary-dark: #008f8f;
+    --color-accent: #ffb020; /* ambre arcade */
+
+    /* Fond — dégradé frais */
+    --color-bg-start: #e8ecff; /* periwinkle clair */
+    --color-bg-end: #d6f0f5; /* cyan clair */
+
+    /* Surfaces & texte */
+    --color-card: #ffffff;
+    --color-text: #1f2547; /* bleu nuit */
+    --color-text-light: #5b6388;
+    --color-success: #2bb673;
+    --color-danger: #e74c5e;
+    --color-danger-dark: #c0392f;
+
+    /* Ombres légèrement plus "techy" */
+    --shadow-soft: 0 10px 30px rgba(63, 81, 212, 0.18);
+    --shadow-bubble: 0 6px 18px rgba(31, 37, 71, 0.2);
+}

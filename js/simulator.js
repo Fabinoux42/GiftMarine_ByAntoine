@@ -106,6 +106,11 @@ const Simulator = (() => {
         kirikouUnlockEl.classList.remove("hidden");
         _buildDialogue(true);
         simulatorContinueBtn.classList.remove("hidden");
+
+        // Déblocage de Kirikou : musique + bascule sur le thème Afrique.
+        Sound.playKirikou();
+        Theme.apply("section-simulator");
+
         State.save();
     }
 
@@ -141,7 +146,7 @@ const Simulator = (() => {
         });
 
         simulatorContinueBtn.addEventListener("click", () => {
-            Navigation.goToSection("section-quiz-politique");
+            Navigation.goToSection("section-wheel");
         });
     }
 

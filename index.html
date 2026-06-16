@@ -7,8 +7,12 @@
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
 
-    <!-- Thème actif — changer ce fichier pour un autre thème -->
+    <!-- Thème de base (mot de passe, accueil, roue, fin) -->
     <link rel="stylesheet" href="css/themes/rose-violet.css">
+    <!-- Thèmes contextuels (activés via body[data-theme] par js/theme.js) -->
+    <link rel="stylesheet" href="css/themes/simulator.css">
+    <link rel="stylesheet" href="css/themes/quiz.css">
+    <link rel="stylesheet" href="css/themes/africa.css">
     <!-- Composants & layout (ne pas modifier pour changer les couleurs) -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -41,14 +45,16 @@
 
 <!--
   Scripts — ordre strict requis :
-  données → stockage → état → modules UI → point d'entrée
+  données → stockage → état → son → modules UI → thème → écrans → point d'entrée
 -->
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/state.js"></script>
+<script src="js/sound.js"></script>
 <script src="js/gauge.js"></script>
 <script src="js/guide.js"></script>
 <script src="js/navigation.js"></script>
+<script src="js/theme.js"></script>
 <script src="js/password.js"></script>
 <script src="js/impossible.js"></script>
 <script src="js/wheel.js"></script>

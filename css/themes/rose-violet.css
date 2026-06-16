@@ -37,6 +37,8 @@
     --color-text: #2d2640; /* prune foncé */
     --color-text-light: #756c8c;
     --color-success: #45b787;
+    --color-danger: #e74c5e; /* rouge — réponse incorrecte */
+    --color-danger-dark: #c0392f;
 
     /* Mini Anto-Man */
     --guide-red: #ff7a7a;

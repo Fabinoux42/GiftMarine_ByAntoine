@@ -50,6 +50,7 @@ function loadIncludes() {
 function initApp() {
 
     // Initialisation des modules dans l'ordre des dépendances
+    Sound.init();       // crée l'élément audio (Kirikou)
     Gauge.init();       // dépend : State
     Guide.init();       // dépend : DOM chrome
     Password.init();    // dépend : DOM lock-screen
@@ -57,6 +58,14 @@ function initApp() {
     Wheel.init();       // dépend : DOM section-wheel
     Simulator.init();   // dépend : DOM section-simulator
     Ending.init();      // dépend : DOM section-fin
+
+    // Thème de base au démarrage (écran mot de passe)
+    Theme.apply("lock-screen");
+
+    // Boutons « Retour à la roue » des mini-jeux (simulateur + quiz)
+    document.querySelectorAll("[data-back-to-wheel]").forEach((btn) => {
+        btn.addEventListener("click", () => Navigation.goToSection("section-wheel"));
+    });
 
     // Bouton "Recommencer"
     document.getElementById("reset-btn").addEventListener("click", () => {
@@ -76,7 +85,8 @@ function initApp() {
         ? data.currentSection
         : "section-home";
 
-    if (target === "section-wheel" && State.isDone("wheel")) Wheel.restoreInstant();
+    // Le simulateur restaure ses quêtes / Kirikou ; la roue (hub) gère
+    // elle-même son affichage via Wheel.onEnterHub() dans goToSection().
     if (target === "section-simulator") Simulator.restore();
 
     Navigation.goToSection(target);

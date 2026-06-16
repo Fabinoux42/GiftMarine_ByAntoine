@@ -89,6 +89,16 @@ input:disabled {
     display: none !important;
 }
 
+/*
+  Les titres / questions reçoivent tabindex="-1" + .focus() pour annoncer
+  le changement d'écran aux lecteurs d'écran. Ce focus purement programmatique
+  ne doit PAS afficher de contour (l'« encadré » disgracieux autour des titres).
+  Le focus clavier reste visible sur les boutons/champs via :focus-visible.
+*/
+[tabindex="-1"]:focus {
+    outline: none;
+}
+
 /* ====================================================================
    2. ÉCRANS / SECTIONS — un seul visible à la fois
 ==================================================================== */
@@ -381,6 +391,31 @@ input:disabled {
 
 .legend-dot--quiz {
     background: var(--color-secondary);
+}
+
+/* Hub : message d'état + panneau « tout terminé » */
+.wheel-status {
+    min-height: 1.4em;
+    margin: 0.2rem 0 0.6rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+.wheel-hub-done {
+    margin-top: 0.5rem;
+}
+
+.wheel-done-text {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    margin: 0.4rem 0 1rem;
+}
+
+/* Bouton « Retour à la roue » présent sur chaque mini-jeu */
+.back-to-wheel-btn {
+    display: inline-block;
+    margin: 0 0 0.6rem;
 }
 
 /* ====================================================================
@@ -812,6 +847,26 @@ input:disabled {
 .quiz-option-btn:focus-visible {
     outline: 3px solid var(--color-secondary);
     outline-offset: 2px;
+}
+
+/* Réponse correcte (questions à bonne réponse) */
+.quiz-option-btn.correct {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+    opacity: 1;
+}
+
+/* Réponse incorrecte : fond rouge, reste visible même désactivée */
+.quiz-option-btn.wrong {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #fff;
+    opacity: 1;
+}
+
+.quiz-option-btn.wrong:hover {
+    transform: none;
 }
 
 .quiz-result-text {

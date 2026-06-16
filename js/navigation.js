@@ -23,17 +23,32 @@ const Navigation = (() => {
         target.classList.add("active");
         State.setCurrentSection(sectionId);
 
+        // Thème contextuel (simulateur / quiz / afrique / base)
+        Theme.apply(sectionId);
+
+        // La musique de Kirikou ne joue que dans le simulateur :
+        // dès qu'on passe à une autre section, on la coupe.
+        if (sectionId !== "section-simulator") {
+            Sound.stopKirikou();
+        }
+
+        // La roue est un hub : (ré)afficher l'état adéquat en y entrant.
+        if (sectionId === "section-wheel") {
+            Wheel.onEnterHub();
+        }
+
         // Lance le quiz si la section en contient un
         const quizKey = target.dataset.quiz;
         if (quizKey) {
             Quiz.startQuiz(quizKey);
         }
 
-        // Affiche ou masque la mention "au simulateur" en page de fin
+        // Affiche la mention "au simulateur" en page de fin
+        // (le simulateur est désormais un mini-jeu obligatoire).
         if (sectionId === "section-fin") {
             const mention = document.getElementById("fin-simulator-mention");
             if (mention) {
-                mention.style.display = (State.getPath() === "simulator") ? "" : "none";
+                mention.style.display = State.isSimulatorComplete() ? "" : "none";
             }
         }
 

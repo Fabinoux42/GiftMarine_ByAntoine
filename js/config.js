@@ -96,11 +96,40 @@ const GUIDE_MESSAGES = {
 const GAUGE_COMPLETE_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
 
 /* ------------------------------------------------------------------
+   SON — déblocage de Kirikou
+   Chemin du mp3 joué au moment précis où Kirikou est débloqué
+   dans le simulateur. Le son est stoppé dès qu'on quitte la section.
+   → Logique : js/sound.js (lecture) + js/navigation.js (arrêt)
+------------------------------------------------------------------ */
+const KIRIKOU_SOUND = "sounds/KirikouSong.mp3";
+
+/* ------------------------------------------------------------------
    ROUE DU DESTIN
    6 secteurs de 60° alternant "simulator" et "quiz".
    Garder un nombre pair pour que le dégradé CSS reste équilibré.
+
+   ⚠️ La roue est désormais un HUB : on y revient entre les mini-jeux.
+   Les deux mini-jeux ("simulator" et "quiz") sont obligatoires ;
+   une fois les deux terminés, la roue propose l'écran de fin.
 ------------------------------------------------------------------ */
 const WHEEL_SEGMENTS = ["simulator", "quiz", "simulator", "quiz", "simulator", "quiz"];
+
+/* ------------------------------------------------------------------
+   JAUGE DE PROGRESSION — répartition des 100 %
+   --------------------------------------------------------------------
+     password   → 10 %  (mot secret trouvé)
+     impossible → 10 %  (clic sur « Oui »)
+     simulator  → 40 %  (réparti sur les 6 quêtes du simulateur)
+     quiz       → 40 %  (réparti sur les 5 quiz)
+   Total = 100 %. Chaque mini-jeu remplit sa part au fur et à mesure.
+   → Calcul : js/state.js (State.gaugePercent)
+------------------------------------------------------------------ */
+const GAUGE_WEIGHTS = {
+    password: 10,
+    impossible: 10,
+    simulator: 40,
+    quiz: 40
+};
 
 /* ------------------------------------------------------------------
    SIMULATEUR — quêtes
@@ -136,8 +165,25 @@ const KIRIKOU_DIALOGUE = [
 
 /* ------------------------------------------------------------------
    QUIZ
-   Pour ajouter / retirer une question : modifier le tableau "questions".
-   Toutes les réponses sont valides (c'est pour le fun !).
+   --------------------------------------------------------------------
+   Deux types de questions :
+
+   1) Question « pour le fun » — toutes les réponses sont valides,
+      n'importe quel clic passe à la suite :
+        { question: "…", options: ["A", "B", "C"] }
+
+   2) Question « à bonne réponse » — ajouter ces 3 champs :
+        correct:           index (0 = 1ʳᵉ option) de la bonne réponse
+        positiveFeedback:  ce que dit Mini Anto-Man si c'est juste
+        negativeFeedbacks: tableau de répliques en cas d'erreur
+                           (1ʳᵉ erreur → [0], 2ᵉ erreur → [1], …)
+
+      Comportement : si la réponse est bonne → Mini Anto-Man dit le
+      positiveFeedback puis on passe à la question suivante. Si elle est
+      fausse → le bouton choisi devient rouge, Mini Anto-Man dit le
+      negativeFeedback correspondant, et on reste sur la question pour
+      laisser choisir une autre réponse.
+   → Moteur : js/quiz.js
 ------------------------------------------------------------------ */
 const QUIZZES = {
 
@@ -292,7 +338,7 @@ const QUIZZES = {
 
     soeur: {
         progressKey: "quizSoeur",
-        next: "section-fin",
+        next: "section-wheel", // dernier quiz → retour au hub (la roue décide de la fin)
         result: "Sœur radar activé. Rien ne lui échappe. 👀",
         questions: [
             {

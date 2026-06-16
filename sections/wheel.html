@@ -1,7 +1,8 @@
 <!-- ================================================================
-     sections/wheel.html — Roue du destin amoureux 🎡
+     sections/wheel.html — Roue du destin amoureux 🎡 (hub)
      Segments → js/config.js : WHEEL_SEGMENTS
      Logique  → js/wheel.js
+     La roue est un hub : on y revient entre les deux mini-jeux.
 ================================================================ -->
 <section id="section-wheel" class="screen">
     <div class="card">
@@ -9,24 +10,35 @@
         <h1>Roue du destin amoureux</h1>
         <h2 class="subtitle">Choisis ton destin… ou laisse le hasard choisir à ta place.</h2>
 
-        <div class="wheel-area">
-            <div class="wheel-pointer" aria-hidden="true">▼</div>
-            <div class="wheel" id="wheel" aria-hidden="true">
-                <div class="wheel-hub">🎯</div>
+        <!-- Zone de spin (cachée quand les deux mini-jeux sont terminés) -->
+        <div id="wheel-spin-area">
+            <div class="wheel-area">
+                <div class="wheel-pointer" aria-hidden="true">▼</div>
+                <div class="wheel" id="wheel" aria-hidden="true">
+                    <div class="wheel-hub">🎯</div>
+                </div>
             </div>
+
+            <div class="wheel-legend" aria-hidden="true">
+                <span class="legend-item">
+                    <span class="legend-dot legend-dot--sim"></span>Antoine &amp; Marine Simulator
+                </span>
+                <span class="legend-item">
+                    <span class="legend-dot legend-dot--quiz"></span>Quiz
+                </span>
+            </div>
+
+            <p id="wheel-status" class="wheel-status" aria-live="polite"></p>
+
+            <button id="spin-btn" type="button" class="btn btn-primary">🎲 Faire tourner la roue</button>
+            <p id="wheel-result" class="feedback" aria-live="polite"></p>
+            <button id="wheel-continue-btn" type="button" class="btn btn-primary hidden">Continuer</button>
         </div>
 
-        <div class="wheel-legend" aria-hidden="true">
-      <span class="legend-item">
-        <span class="legend-dot legend-dot--sim"></span>Antoine &amp; Marine Simulator
-      </span>
-      <span class="legend-item">
-        <span class="legend-dot legend-dot--quiz"></span>Quiz Direct
-      </span>
+        <!-- Panneau « tout terminé » (affiché quand les 2 mini-jeux sont faits) -->
+        <div id="wheel-hub-done" class="wheel-hub-done hidden">
+            <p class="wheel-done-text">Les deux mini-jeux sont terminés ! 🎉</p>
+            <button id="wheel-to-ending-btn" type="button" class="btn btn-primary">Voir la fin ❤️</button>
         </div>
-
-        <button id="spin-btn" type="button" class="btn btn-primary">Faire tourner la roue</button>
-        <p id="wheel-result" class="feedback" aria-live="polite"></p>
-        <button id="wheel-continue-btn" type="button" class="btn btn-primary hidden">Continuer</button>
     </div>
 </section>
