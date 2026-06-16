@@ -80,10 +80,24 @@ const Wheel = (() => {
         const segAngle = 360 / WHEEL_SEGMENTS.length;
         const targetIndex = _pickTargetIndex(result);
         const center = targetIndex * segAngle + segAngle / 2;
-        const jitter = (Math.random() * segAngle * 0.6) - (segAngle * 0.3);
+        // Jitter borné à ±0,25 secteur : l'arrêt reste naturel mais le
+        // pointeur tombe toujours bien à l'intérieur du secteur (jamais
+        // sur une bordure).
+        const jitter = (Math.random() * segAngle * 0.5) - (segAngle * 0.25);
         const extraSpins = 5 + Math.floor(Math.random() * 3);
 
-        wheelRotation += extraSpins * 360 + (360 - center) + jitter;
+        // La roue accumule ses rotations d'un spin à l'autre. Il faut donc
+        // viser l'orientation FINALE à partir de l'orientation ACTUELLE,
+        // sinon seul le tout premier spin tombe au bon endroit (les suivants
+        // étaient décalés → le pointeur affichait un autre secteur que le
+        // résultat annoncé).
+        const landingAngle = center + jitter;                         // angle local visé sous le pointeur
+        const targetMod = ((360 - landingAngle) % 360 + 360) % 360;   // orientation finale (mod 360)
+        const currentMod = ((wheelRotation % 360) + 360) % 360;       // orientation actuelle (mod 360)
+        let delta = targetMod - currentMod;
+        if (delta <= 0) delta += 360;                                 // toujours tourner vers l'avant
+
+        wheelRotation += extraSpins * 360 + delta;
         wheelEl.style.transform = "rotate(" + wheelRotation + "deg)";
         setTimeout(() => _revealResult(result), 4300);
     }

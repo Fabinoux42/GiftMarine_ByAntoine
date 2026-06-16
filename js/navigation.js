@@ -27,9 +27,13 @@ const Navigation = (() => {
         Theme.apply(sectionId);
 
         // La musique de Kirikou ne joue que dans le simulateur :
-        // dès qu'on passe à une autre section, on la coupe.
+        //  - on entre sur le simulateur ET Kirikou est déjà débloqué → on
+        //    (re)lance la musique (elle ne repartait pas quand on revenait) ;
+        //  - on passe à une autre section → on la coupe.
         if (sectionId !== "section-simulator") {
             Sound.stopKirikou();
+        } else if (State.isKirikouUnlocked()) {
+            Sound.playKirikou();
         }
 
         // La roue est un hub : (ré)afficher l'état adéquat en y entrant.

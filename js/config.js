@@ -92,8 +92,8 @@ const GUIDE_MESSAGES = {
     theEnd: "Mission accomplie. Bisous réglementaire."
 };
 
-// Bannière affichée quand la jauge atteint 100 %
-const GAUGE_COMPLETE_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
+// Message affiché sur l'écran de fin, au clic sur « Merciii pour tout ».
+const ENDING_FINAL_MESSAGE = "VIVE MARINE, VIVE LES GROS NICHONS, VIVE NOUS.";
 
 /* ------------------------------------------------------------------
    SON — déblocage de Kirikou
