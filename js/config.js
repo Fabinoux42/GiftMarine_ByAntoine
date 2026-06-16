@@ -90,11 +90,11 @@ const GUIDE_MESSAGES = {
     kirikouReaction: "Cette conversation a pris une direction inattendue.",
     quizDone: "Marine power loading…",
     theEnd: "Mission accomplie. Bisous réglementaire.",
-    hangmanIntro: "Mode Pendu Kawaï activé. Reste mignonne, surtout.",
-    hangmanGood: "Jolie lettre. Continue comme ça.",
-    hangmanBad: "Aïe. L'ambiance se charge un peu…",
-    hangmanWin: "Sauvé·e ! La mignonnerie l'emporte.",
-    hangmanLose: "Game over. C'est devenu très glauque, là."
+    hangmanIntro: "En vrai un pendu kawaï ça te dit ? Reste mignonne, surtout.",
+    hangmanGood: "Jolie lettre. Continue, j'ai cru que c'était la lettre Q carrément !.",
+    hangmanBad: "Aïe. Cheh.",
+    hangmanWin: "Sauvé ! On a failli faire une Marion Cotillard et mourir de façon nulle !",
+    hangmanLose: "Game over : sorry BoJack, there is no other side"
 };
 
 // Message affiché sur l'écran de fin, au clic sur « Merciii pour tout ».
@@ -144,7 +144,7 @@ const HANGMAN_WORDS = [
     {word: "TATOUAGE", hint: "Ce que tu veux faire dès que tu as de l'argent"},
     {word: "CALIN", hint: "Quand tu me vois, c'est un élément obligatoire !"},
     {word: "AMOUR", hint: "Le thème central, tout simplement."},
-    {word: "ZOMBIE", hint: "On y a survécu (merci Walking Dead)."},
+    {word: "ZOMBIE", hint: "Dans the walking dead, on dirait qu'il est lent ce lait"},
     {word: "CARBONARA", hint: "Ce qu'Antoine ne fait pas vraiment en pâte"},
     {word: "PESTO", hint: "Le plat de ta grand-mère que tu veux me faire"}
 ];
