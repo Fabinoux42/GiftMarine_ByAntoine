@@ -252,7 +252,7 @@ const QUIZZES = {
     italie: {
         progressKey: "quizItalie",
         next: "section-quiz-ocean",
-        result: "Marine est italienne à 94%. Les 6% restants sont probablement du grognichon. 🍝",
+        result: "Marine est italienne à 94%. Les 6% restants sont probablement du grosnichon. 🍝",
         questions: [
             {
                 question: "La vraie carbonara contient-elle de la crème ?",
@@ -342,7 +342,7 @@ const QUIZZES = {
         result: "Sœur radar activé. Rien ne lui échappe. 👀",
         questions: [
             {
-                question: "Marine dit qu'elle n'est pas grognichon.",
+                question: "Marine dit qu'elle n'est pas grosnichon.",
                 options: ["Elle juge en silence", "Elle rigole", "Elle expose la vérité", "Elle appelle Océane en renfort"]
             },
             {

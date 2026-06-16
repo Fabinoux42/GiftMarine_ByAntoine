@@ -45,10 +45,13 @@ const Wheel = (() => {
        Tirage
     ------------------------------------------------------------------ */
 
-    /** Tire le mini-jeu : le restant s'il n'en reste qu'un, sinon au hasard. */
+    /**
+     * Tire un mini-jeu AU HASARD parmi les deux, même si l'un est déjà
+     * terminé : on doit pouvoir retourner sur la page tirée par la roue,
+     * finie ou non. (Le panneau « fin » n'apparaît que lorsque les DEUX
+     * mini-jeux sont réellement terminés — voir onEnterHub.)
+     */
     function _pickResult() {
-        const remaining = _remainingGames();
-        if (remaining.length === 1) return remaining[0];
         return WHEEL_SEGMENTS[Math.floor(Math.random() * WHEEL_SEGMENTS.length)];
     }
 
@@ -109,9 +112,10 @@ const Wheel = (() => {
         spinBtn.textContent = "🎲 Faire tourner la roue";
         spinBtn.classList.replace("btn-secondary", "btn-primary");
 
-        // S'il ne reste qu'un mini-jeu, on l'annonce.
+        // Rappel de ce qu'il reste à terminer pour atteindre la fin.
+        // (La roue, elle, peut retomber sur l'un OU l'autre mini-jeu.)
         if (remaining.length === 1) {
-            statusEl.textContent = "Encore un mini-jeu : " + LABELS[remaining[0]] + " !";
+            statusEl.textContent = "Il te reste à terminer : " + LABELS[remaining[0]] + " !";
         } else {
             statusEl.textContent = "";
         }

@@ -1,33 +1,37 @@
 /* ====================================================================
-   THÈME : quiz — "plateau de quiz / game show" (mini-jeu Quiz)
+   THÈME : quiz — "plateau ensoleillé / game show" (mini-jeu Quiz)
    --------------------------------------------------------------------
    Activé via body[data-theme="quiz"] (voir js/theme.js) sur les écrans
-   de quiz atteints depuis la roue. Palette écarlate + teal + or, plus
-   chaude et plus "télé-crochet" que le thème de base rose-violet.
+   de quiz atteints depuis la roue.
+
+   Identité PROPRE au quiz : registre chaud orange + teal + or, sur fond
+   crème/pêche. Volontairement éloigné du rose (thème de base) ET du
+   violet (thème simulateur) → trois ambiances bien distinctes.
 
    Seules les variables qui changent sont redéfinies.
 ==================================================================== */
 
 body[data-theme="quiz"] {
-    /* Couleurs principales — rouge plateau + or */
-    --color-primary: #e63950; /* écarlate */
-    --color-primary-dark: #c21f3a;
-    --color-secondary: #2a9d8f; /* teal contrastant */
-    --color-secondary-dark: #1f7a70;
-    --color-accent: #f4a623; /* or */
+    /* Couleurs principales — orange plateau + teal contrastant */
+    --color-primary: #f4711e;        /* orange vif (boutons principaux) */
+    --color-primary-dark: #d95f12;
+    --color-secondary: #0d9488;      /* teal profond */
+    --color-secondary-dark: #0b7a70;
+    --color-accent: #f5b912;         /* or — lumières de plateau */
 
-    /* Fond — crème chaleureuse */
-    --color-bg-start: #fff0e6; /* crème */
-    --color-bg-end: #ffe0ea; /* rose poudré chaud */
+    /* Fond — dégradé crème → pêche (chaud, ni rose ni violet) */
+    --color-bg-start: #fff4e0;       /* crème chaude */
+    --color-bg-end: #ffe5c7;         /* pêche / abricot clair */
 
     /* Surfaces & texte */
     --color-card: #ffffff;
-    --color-text: #3a2230; /* prune-brun foncé */
-    --color-text-light: #8a6b78;
+    --color-text: #3a2a18;           /* brun chaud foncé */
+    --color-text-light: #8a7257;
     --color-success: #2bb673;
     --color-danger: #d62828;
     --color-danger-dark: #a51e1e;
 
-    --shadow-soft: 0 10px 30px rgba(194, 31, 58, 0.16);
-    --shadow-bubble: 0 6px 18px rgba(58, 34, 48, 0.2);
+    /* Ombres teintées orange */
+    --shadow-soft: 0 10px 30px rgba(217, 95, 18, 0.18);
+    --shadow-bubble: 0 6px 18px rgba(58, 42, 24, 0.2);
 }
