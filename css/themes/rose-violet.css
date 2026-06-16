@@ -1,0 +1,64 @@
+/* ====================================================================
+   THÈME : rose-violet — "carnet d'amoureux un peu super-héros"
+   --------------------------------------------------------------------
+   Pour créer un nouveau thème :
+   1. Copier ce fichier dans css/themes/mon-theme.css
+   2. Changer les valeurs des variables ci-dessous
+   3. Remplacer le <link> du thème dans index.html
+
+   Variables disponibles :
+     --color-primary / --color-primary-dark   → actions principales (boutons, accents)
+     --color-secondary / --color-secondary-dark → actions secondaires (violet)
+     --color-accent                            → doré (jauges, badges)
+     --color-bg-start / --color-bg-end        → dégradé de fond
+     --color-card                             → fond des cartes
+     --color-text / --color-text-light        → texte principal / secondaire
+     --color-success                          → validation, quêtes terminées
+     --guide-red / --guide-red-dark           → couleur du personnage Mini Anto-Man
+     --radius-lg / --radius-md / --radius-pill → arrondi des coins
+     --shadow-soft / --shadow-bubble          → ombres portées
+     --font-main                              → police principale
+==================================================================== */
+
+:root {
+    /* Couleurs principales */
+    --color-primary: #ff5d8f; /* rose vif — actions principales */
+    --color-primary-dark: #d63d6e;
+    --color-secondary: #6c5ce7; /* violet — actions secondaires */
+    --color-secondary-dark: #5443c4;
+    --color-accent: #ffd166; /* doré — jauges, badges, accents */
+
+    /* Fond */
+    --color-bg-start: #ffe5ef; /* rose poudré */
+    --color-bg-end: #e3d9ff; /* lavande */
+
+    /* Surfaces & texte */
+    --color-card: #ffffff;
+    --color-text: #2d2640; /* prune foncé */
+    --color-text-light: #756c8c;
+    --color-success: #45b787;
+
+    /* Mini Anto-Man */
+    --guide-red: #ff7a7a;
+    --guide-red-dark: #e14b4b;
+
+    /* Forme */
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-pill: 999px;
+
+    /* Ombres */
+    --shadow-soft: 0 10px 30px rgba(108, 92, 231, 0.16);
+    --shadow-bubble: 0 6px 18px rgba(45, 38, 64, 0.18);
+
+    /* Typographie */
+    --font-main: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+
+    /*
+      Pour une police plus "fun" (nécessite une connexion internet) :
+      1. Décommenter la ligne @import ci-dessous
+      2. Ajouter "Baloo 2" en tête de --font-main
+
+      @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap');
+    */
+}

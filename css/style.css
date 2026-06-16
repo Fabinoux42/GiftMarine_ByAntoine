@@ -1,0 +1,1205 @@
+/* ====================================================================
+   STYLE.CSS — Composants, layout et animations
+   --------------------------------------------------------------------
+   Ce fichier ne contient AUCUNE couleur ou valeur en dur :
+   tout passe par les variables CSS définies dans le thème actif.
+   → Thème actif : css/themes/rose-violet.css (ou autre)
+
+   Organisation :
+     1.  Reset & base
+     2.  Écrans / sections
+     3.  Cartes
+     4.  Boutons
+     5.  Écran mot de passe
+     6.  Question impossible
+     7.  Roue du destin
+     8.  Simulateur — personnages
+     9.  Simulateur — Love XP
+    10.  Simulateur — quêtes
+    11.  Simulateur — déblocage Kirikou
+    12.  Paillettes
+    13.  Quiz
+    14.  Jauge de progression
+    15.  Mini Anto-Man (guide)
+    16.  Barre d'outils
+    17.  Bannière finale
+    18.  Pluie de cœurs
+    19.  Responsive (tablette, desktop)
+    20.  Responsive (très petits écrans)
+    21.  Accessibilité (prefers-reduced-motion)
+==================================================================== */
+
+/* ====================================================================
+   1. RESET & BASE
+==================================================================== */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: linear-gradient(160deg, var(--color-bg-start) 0%, var(--color-bg-end) 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+h1, h2, h3 {
+    margin: 0.4em 0;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+p {
+    margin: 0.6em 0;
+    line-height: 1.6;
+}
+
+button {
+    font-family: inherit;
+}
+
+button:disabled,
+input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ====================================================================
+   2. ÉCRANS / SECTIONS — un seul visible à la fois
+==================================================================== */
+.screen {
+    display: none;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.1rem;
+    text-align: center;
+}
+
+.screen.active {
+    display: flex;
+    animation: fadeInUp 0.55s ease both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ====================================================================
+   3. CARTES
+==================================================================== */
+.card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 2rem 1.4rem;
+    max-width: 480px;
+    width: 100%;
+}
+
+.card-wide {
+    max-width: 700px;
+}
+
+.section-icon {
+    font-size: 2.6rem;
+    margin: 0 0 0.4rem;
+}
+
+.subtitle {
+    color: var(--color-secondary);
+}
+
+.riddle {
+    font-style: italic;
+    color: var(--color-text-light);
+    background: var(--color-bg-start);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    margin: 1rem 0;
+}
+
+.final-line {
+    font-weight: 700;
+    color: var(--color-primary-dark);
+}
+
+.feedback {
+    min-height: 1.6em;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+.final-message {
+    color: var(--color-primary-dark);
+    font-size: 1.1rem;
+}
+
+/* ====================================================================
+   4. BOUTONS
+==================================================================== */
+.btn {
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 0.75rem 1.7rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 0.35rem;
+    transition: transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(45, 38, 64, 0.18);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 2px;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: var(--color-secondary-dark);
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.75);
+    color: var(--color-text);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.45rem 0.9rem;
+    box-shadow: var(--shadow-soft);
+    white-space: nowrap;
+}
+
+.btn-ghost:hover {
+    background: #fff;
+}
+
+/* ====================================================================
+   5. ÉCRAN MOT DE PASSE
+==================================================================== */
+#lock-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    margin-top: 1.1rem;
+    text-align: left;
+}
+
+#lock-form label {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+#lock-form input {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-bg-end);
+    font-size: 1rem;
+    background: #fff;
+    color: var(--color-text);
+}
+
+#lock-form input:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+}
+
+.lock-feedback {
+    min-height: 1.6em;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+.lock-feedback.success {
+    color: var(--color-success);
+}
+
+/* ====================================================================
+   6. QUESTION IMPOSSIBLE — le bouton "Non" qui fuit
+==================================================================== */
+.impossible-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 4rem;
+}
+
+#no-btn {
+    z-index: 45;
+    transition: left 0.3s ease,
+    top 0.3s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+/* ====================================================================
+   7. ROUE DU DESTIN AMOUREUX
+==================================================================== */
+.wheel-area {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0.5rem auto 1rem;
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    transform-origin: 50% 50%;
+    background: conic-gradient(
+            from 0deg,
+            var(--color-primary) 0deg 60deg,
+            var(--color-secondary) 60deg 120deg,
+            var(--color-primary) 120deg 180deg,
+            var(--color-secondary) 180deg 240deg,
+            var(--color-primary) 240deg 300deg,
+            var(--color-secondary) 300deg 360deg
+    );
+    transition: transform 4s cubic-bezier(0.17, 0.67, 0.2, 1.02);
+}
+
+.wheel-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 46px;
+    height: 46px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transform: translate(-50%, -50%);
+    box-shadow: var(--shadow-bubble);
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.7rem;
+    color: var(--color-accent);
+    z-index: 5;
+    filter: drop-shadow(0 2px 2px rgba(45, 38, 64, 0.3));
+}
+
+.wheel-legend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.legend-dot--sim {
+    background: var(--color-primary);
+}
+
+.legend-dot--quiz {
+    background: var(--color-secondary);
+}
+
+/* ====================================================================
+   8. SIMULATEUR — personnages
+==================================================================== */
+.character-select {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.2rem 0;
+}
+
+.character-card {
+    position: relative;
+    flex: 1 1 120px;
+    max-width: 150px;
+    background: var(--color-bg-start);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 0.6rem;
+    text-align: center;
+}
+
+.character-name {
+    margin: 0.35rem 0 0;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.character-role {
+    margin: 0.15rem 0 0;
+    font-size: 0.74rem;
+    color: var(--color-text-light);
+    min-height: 2.2em;
+}
+
+.character-bubble {
+    margin: 0.3rem 0 0;
+    min-height: 1.4em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.character-bubble.visible {
+    opacity: 1;
+}
+
+/* Avatars — forme commune */
+.character-avatar {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto;
+    border-radius: 50%;
+    box-shadow: var(--shadow-bubble);
+}
+
+.char-eye {
+    position: absolute;
+    top: 26px;
+    width: 11px;
+    height: 13px;
+    background: #fff;
+    border-radius: 50% 50% 45% 45%;
+}
+
+.char-eye::after {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--color-text);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.char-eye-left {
+    left: 16px;
+}
+
+.char-eye-right {
+    left: 43px;
+}
+
+.char-mouth {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: 18px;
+    height: 9px;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.85);
+    border-radius: 0 0 50% 50%;
+    transform: translateX(-50%);
+}
+
+.char-eyebrow {
+    position: absolute;
+    top: 19px;
+    left: 14px;
+    width: 16px;
+    height: 3px;
+    background: var(--color-text);
+    border-radius: 2px;
+    transform: rotate(-12deg);
+}
+
+/* Antoine — petit artiste */
+.character-avatar--antoine {
+    background: radial-gradient(circle at 35% 30%, #bfe6ff, #4fa8e0 60%, #2f7cb8);
+}
+
+.character-avatar--antoine::before { /* béret */
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 46px;
+    height: 18px;
+    background: var(--color-secondary-dark);
+    border-radius: 50%;
+    transform: translateX(-55%) rotate(-10deg);
+}
+
+.character-avatar--antoine::after { /* pompon du béret */
+    content: "";
+    position: absolute;
+    top: -11px;
+    left: 66%;
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+}
+
+/* Marine — reine du jugement affectueux */
+.character-avatar--marine {
+    background: radial-gradient(circle at 35% 30%, #ffd6e6, var(--color-primary) 60%, var(--color-primary-dark));
+}
+
+.character-avatar--marine::before { /* couronne */
+    content: "";
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    width: 50px;
+    height: 16px;
+    background: var(--color-accent);
+    transform: translateX(-50%);
+    clip-path: polygon(0% 100%, 0% 45%, 17% 100%, 33% 15%, 50% 100%, 67% 15%, 83% 100%, 100% 45%, 100% 100%);
+}
+
+.character-avatar--marine .char-mouth {
+    border-bottom-color: rgba(45, 38, 64, 0.45);
+}
+
+/* Kirikou — verrouillé puis débloqué */
+.character-avatar--kirikou {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: #fff;
+}
+
+.character-avatar--kirikou.locked {
+    background: linear-gradient(135deg, #d8d8e0, #a4a4b4);
+    filter: grayscale(0.3);
+}
+
+.character-avatar--kirikou.unlocked {
+    background: radial-gradient(circle at 35% 30%, #fff3b0, var(--color-accent) 55%, #e0a700);
+    animation: kirikouPop 0.6s ease;
+}
+
+.character-avatar--kirikou.unlocked::before { /* petite feuille */
+    content: "🌿";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+}
+
+@keyframes kirikouPop {
+    0% {
+        transform: scale(0.4) rotate(-15deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.15) rotate(8deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* ====================================================================
+   9. SIMULATEUR — Love XP
+==================================================================== */
+.love-xp {
+    margin: 1.1rem 0;
+}
+
+.love-xp-label {
+    margin: 0 0 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.love-xp-track {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    box-shadow: inset 0 0 4px rgba(45, 38, 64, 0.12);
+}
+
+.love-xp-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
+    border-radius: var(--radius-pill);
+    transition: width 0.5s ease;
+}
+
+/* ====================================================================
+   10. SIMULATEUR — Quêtes
+==================================================================== */
+.quest-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.quest-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    background: var(--color-bg-start);
+    border-radius: var(--radius-md);
+    border-left: 5px solid var(--color-primary);
+    padding: 0.65rem 0.85rem;
+    transition: border-color 0.25s ease, opacity 0.25s ease;
+}
+
+.quest-item.done {
+    border-left-color: var(--color-success);
+    opacity: 0.7;
+}
+
+.quest-info {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.quest-icon {
+    font-size: 1.3rem;
+}
+
+.quest-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.quest-btn {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* ====================================================================
+   11. SIMULATEUR — Déblocage Kirikou
+==================================================================== */
+.kirikou-unlock {
+    margin-top: 1.3rem;
+    padding-top: 1rem;
+    border-top: 2px dashed var(--color-bg-end);
+}
+
+.kirikou-unlock-title {
+    margin: 0 0 0.6rem;
+    font-weight: 800;
+    color: var(--color-primary-dark);
+    text-align: center;
+}
+
+.dialogue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.dialogue-line {
+    background: var(--color-bg-start);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 0.8rem;
+    font-size: 0.88rem;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: dialogueIn 0.4s ease forwards;
+}
+
+.dialogue-line strong {
+    color: var(--color-secondary);
+}
+
+@keyframes dialogueIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    transform: scale(0.8);
+    animation: badgeIn 0.5s ease 0.3s forwards;
+}
+
+@keyframes badgeIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ====================================================================
+   12. PAILLETTES — animation de réussite
+==================================================================== */
+.sparkle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 950;
+    font-size: 1.3rem;
+    pointer-events: none;
+    animation: sparkleFly ease-out forwards;
+}
+
+@keyframes sparkleFly {
+    0% {
+        transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -80px))) scale(1.3) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+/* ====================================================================
+   13. QUIZ
+==================================================================== */
+.quiz-container {
+    margin-top: 1.1rem;
+    text-align: left;
+}
+
+.quiz-progress {
+    margin: 0 0 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    text-align: center;
+}
+
+.quiz-question {
+    margin: 0.2rem 0 1rem;
+    text-align: center;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.quiz-option-btn {
+    background: var(--color-bg-start);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.15s ease, background-color 0.18s ease;
+}
+
+.quiz-option-btn:hover {
+    border-color: var(--color-primary);
+    transform: translateX(3px);
+}
+
+.quiz-option-btn:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 2px;
+}
+
+.quiz-result-text {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin: 0.4rem 0 1.1rem;
+}
+
+.quiz-container .btn {
+    display: block;
+    margin: 0 auto;
+}
+
+/* ====================================================================
+   14. JAUGE DE PROGRESSION
+==================================================================== */
+.progress-gauge {
+    position: fixed;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gauge-track {
+    width: 14px;
+    height: 42vh;
+    max-height: 320px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: var(--radius-pill);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 6px rgba(45, 38, 64, 0.12);
+}
+
+.gauge-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    background: linear-gradient(180deg, var(--color-accent), var(--color-primary));
+    border-radius: var(--radius-pill);
+    transition: height 0.6s ease;
+}
+
+.gauge-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0.15rem 0.4rem;
+    border-radius: 6px;
+}
+
+/* ====================================================================
+   15. MINI ANTO-MAN (guide)
+==================================================================== */
+.guide-wrapper {
+    position: fixed;
+    bottom: 14px;
+    left: 14px;
+    z-index: 50;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.guide-wrapper.guide-hidden {
+    opacity: 0;
+    transform: translateY(30px) scale(0.7);
+    pointer-events: none;
+}
+
+.guide-character {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffb1b1, var(--guide-red) 55%, var(--guide-red-dark) 100%);
+    box-shadow: 0 6px 16px rgba(225, 75, 75, 0.45);
+    animation: guideBob 3.2s ease-in-out infinite;
+}
+
+.guide-mask {
+    position: absolute;
+    top: 20px;
+    left: 8px;
+    right: 8px;
+    height: 18px;
+    background: var(--guide-red-dark);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 6px;
+}
+
+.guide-eye {
+    position: relative;
+    width: 12px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50% 50% 45% 45%;
+}
+
+.guide-eye::after {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--color-text);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.guide-mouth {
+    position: absolute;
+    bottom: 13px;
+    left: 50%;
+    width: 18px;
+    height: 9px;
+    border-bottom: 3px solid rgba(45, 38, 64, 0.35);
+    border-radius: 0 0 50% 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes guideBob {
+    0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.guide-speech-bubble {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 0;
+    max-width: 230px;
+    background: #fff;
+    color: var(--color-text);
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: left;
+    box-shadow: var(--shadow-bubble);
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+    transform-origin: bottom left;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+}
+
+.guide-speech-bubble.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+.guide-speech-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 18px;
+    border-width: 7px 7px 0;
+    border-style: solid;
+    border-color: #fff transparent transparent;
+}
+
+/* ====================================================================
+   16. BARRE D'OUTILS (haut droite)
+==================================================================== */
+.toolbar {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+}
+
+/* ====================================================================
+   17. BANNIÈRE FINALE (jauge 100%)
+==================================================================== */
+.final-banner {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    max-width: 92vw;
+    transform: translate(-50%, -160%);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    z-index: 1000;
+    transition: transform 0.5s ease;
+}
+
+.final-banner.visible {
+    transform: translate(-50%, 0);
+}
+
+/* ====================================================================
+   18. PLUIE DE CŒURS
+==================================================================== */
+#hearts-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 900;
+}
+
+.floating-heart {
+    position: absolute;
+    bottom: -10vh;
+    animation-name: floatUp;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-115vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ====================================================================
+   19. RESPONSIVE — tablette (≥600px) et desktop (≥900px)
+==================================================================== */
+@media (min-width: 600px) {
+    h1 {
+        font-size: 1.85rem;
+    }
+
+    h2 {
+        font-size: 1.15rem;
+    }
+
+    .card {
+        padding: 2.5rem 2.25rem;
+    }
+
+    .section-icon {
+        font-size: 3rem;
+    }
+
+    .impossible-buttons {
+        gap: 1rem;
+    }
+
+    .wheel-area {
+        width: 260px;
+        height: 260px;
+    }
+}
+
+@media (min-width: 900px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .card {
+        padding: 3rem;
+    }
+}
+
+/* ====================================================================
+   20. RESPONSIVE — très petits écrans (≤480px)
+==================================================================== */
+@media (max-width: 480px) {
+    .progress-gauge {
+        right: 4px;
+    }
+
+    .gauge-track {
+        width: 8px;
+        height: 30vh;
+    }
+
+    .gauge-label {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
+    }
+
+    .guide-wrapper {
+        bottom: 10px;
+        left: 10px;
+    }
+
+    .guide-character {
+        width: 50px;
+        height: 50px;
+    }
+
+    .guide-mask {
+        top: 16px;
+        height: 14px;
+    }
+
+    .guide-eye {
+        width: 9px;
+        height: 11px;
+    }
+
+    .guide-mouth {
+        bottom: 10px;
+        width: 14px;
+        height: 7px;
+    }
+
+    .guide-speech-bubble {
+        max-width: 150px;
+        font-size: 0.75rem;
+        padding: 0.5rem 0.7rem;
+    }
+
+    .toolbar {
+        top: 6px;
+        right: 6px;
+    }
+
+    .btn-ghost {
+        font-size: 0.68rem;
+        padding: 0.35rem 0.7rem;
+    }
+
+    .wheel-area {
+        width: 180px;
+        height: 180px;
+    }
+
+    .wheel-pointer {
+        font-size: 1.4rem;
+    }
+
+    .character-avatar {
+        width: 58px;
+        height: 58px;
+    }
+
+    .character-card {
+        padding: 0.7rem 0.4rem;
+    }
+
+    .character-role {
+        font-size: 0.68rem;
+    }
+
+    .quest-title {
+        font-size: 0.85rem;
+    }
+
+    .quest-btn {
+        font-size: 0.78rem;
+        padding: 0.45rem 0.8rem;
+    }
+}
+
+/* ====================================================================
+   21. ACCESSIBILITÉ — prefers-reduced-motion
+==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -1,0 +1,32 @@
+<!-- ================================================================
+     sections/wheel.html — Roue du destin amoureux 🎡
+     Segments → js/config.js : WHEEL_SEGMENTS
+     Logique  → js/wheel.js
+================================================================ -->
+<section id="section-wheel" class="screen">
+    <div class="card">
+        <p class="section-icon" aria-hidden="true">🎡</p>
+        <h1>Roue du destin amoureux</h1>
+        <h2 class="subtitle">Choisis ton destin… ou laisse le hasard choisir à ta place.</h2>
+
+        <div class="wheel-area">
+            <div class="wheel-pointer" aria-hidden="true">▼</div>
+            <div class="wheel" id="wheel" aria-hidden="true">
+                <div class="wheel-hub">🎯</div>
+            </div>
+        </div>
+
+        <div class="wheel-legend" aria-hidden="true">
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--sim"></span>Antoine &amp; Marine Simulator
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--quiz"></span>Quiz Direct
+      </span>
+        </div>
+
+        <button id="spin-btn" type="button" class="btn btn-primary">Faire tourner la roue</button>
+        <p id="wheel-result" class="feedback" aria-live="polite"></p>
+        <button id="wheel-continue-btn" type="button" class="btn btn-primary hidden">Continuer</button>
+    </div>
+</section>
