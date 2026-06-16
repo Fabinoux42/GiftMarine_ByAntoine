@@ -1,0 +1,29 @@
+<!-- ================================================================
+     sections/lock.html — Écran mot de passe 🗝️
+     Énigme aléatoire (thème SNK). Modifier dans js/config.js :
+     PASSWORD_RIDDLES (énigmes) + GUIDE_MESSAGES.passwordSuccess
+================================================================ -->
+<section id="lock-screen" class="screen active">
+    <div class="card lock-card">
+        <p class="section-icon" aria-hidden="true">🗝️</p>
+        <h1>Avant d'entrer dans le sanctuaire des 4 mois…</h1>
+        <p>Marine doit prouver qu'elle connaît ses classiques (édition surprise).</p>
+        <p class="riddle">
+            « <span id="riddle-text">Chargement de l'énigme…</span> »
+        </p>
+        <form id="lock-form" novalidate>
+            <label for="password-input">Entre le prénom secret</label>
+            <input
+                    type="text"
+                    id="password-input"
+                    name="password"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    required
+            >
+            <button type="submit" class="btn btn-primary">Déverrouiller</button>
+        </form>
+        <p id="lock-feedback" class="lock-feedback" aria-live="polite"></p>
+    </div>
+</section>

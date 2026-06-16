@@ -1,0 +1,118 @@
+<!-- ================================================================
+     sections/simulator.html — Antoine & Marine Simulator 🎮
+     Quêtes    → js/config.js : SIMULATOR_QUESTS
+     Logique   → js/simulator.js
+     Pour ajouter une quête :
+       1. Ajouter dans SIMULATOR_QUESTS (config.js)
+       2. Ajouter un <li data-quest="questN"> ci-dessous
+================================================================ -->
+<section id="section-simulator" class="screen">
+    <div class="card card-wide">
+        <p class="section-icon" aria-hidden="true">🎮</p>
+        <h1>Antoine &amp; Marine Simulator</h1>
+        <h2 class="subtitle">Débloquez ensemble le niveau ultime : Kirikou.</h2>
+
+        <!-- Sélection de personnages -->
+        <div class="character-select">
+
+            <div class="character-card">
+                <div class="character-avatar character-avatar--antoine" aria-hidden="true">
+                    <span class="char-eye char-eye-left"></span>
+                    <span class="char-eye char-eye-right"></span>
+                    <span class="char-mouth"></span>
+                </div>
+                <p class="character-name">Antoine</p>
+                <p class="character-role">Petit artiste</p>
+            </div>
+
+            <div class="character-card">
+                <div class="character-avatar character-avatar--marine" aria-hidden="true">
+                    <span class="char-eyebrow"></span>
+                    <span class="char-eye char-eye-left"></span>
+                    <span class="char-eye char-eye-right"></span>
+                    <span class="char-mouth"></span>
+                </div>
+                <p class="character-name">Marine</p>
+                <p class="character-role">Reine du jugement affectueux</p>
+                <p id="marine-bubble" class="character-bubble" aria-live="polite"></p>
+            </div>
+
+            <div class="character-card">
+                <div class="character-avatar character-avatar--kirikou locked" id="kirikou-avatar" aria-hidden="true">
+                    🔒
+                </div>
+                <p class="character-name">Kirikou</p>
+                <p class="character-role" id="kirikou-role">Niveau verrouillé</p>
+            </div>
+
+        </div>
+
+        <!-- Jauge Love XP -->
+        <div class="love-xp">
+            <p class="love-xp-label">Love XP : <span id="love-xp-value">0</span> / 6</p>
+            <div class="love-xp-track">
+                <div id="love-xp-fill" class="love-xp-fill"></div>
+            </div>
+        </div>
+
+        <!-- Liste des quêtes -->
+        <ul class="quest-list" id="quest-list">
+            <li class="quest-item" data-quest="quest1">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">🍳</span>
+          <span class="quest-title">Préparer un repas ensemble</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+            <li class="quest-item" data-quest="quest2">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">📺</span>
+          <span class="quest-title">Regarder une série ensemble</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+            <li class="quest-item" data-quest="quest3">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">🎮</span>
+          <span class="quest-title">Jouer aux jeux vidéo</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+            <li class="quest-item" data-quest="quest4">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">🙄</span>
+          <span class="quest-title">Se chamailler pour rien</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+            <li class="quest-item" data-quest="quest5">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">😂</span>
+          <span class="quest-title">Faire rire Marine</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+            <li class="quest-item" data-quest="quest6">
+        <span class="quest-info">
+          <span class="quest-icon" aria-hidden="true">🛋️</span>
+          <span class="quest-title">Câlin sous plaid</span>
+        </span>
+                <button type="button" class="btn btn-secondary quest-btn">Quête terminée</button>
+            </li>
+        </ul>
+
+        <!-- Déblocage Kirikou (masqué jusqu'à la 6e quête) -->
+        <div class="kirikou-unlock hidden" id="kirikou-unlock">
+            <p class="kirikou-unlock-title">✨ Niveau ultime débloqué ✨</p>
+            <ul class="dialogue-list" id="dialogue-list"></ul>
+            <div class="badge" id="badge-chaos">
+                <span class="badge-icon" aria-hidden="true">🏆</span>
+                <span class="badge-text">Badge débloqué : Famille du chaos tendre</span>
+            </div>
+        </div>
+
+        <button id="simulator-continue-btn" type="button" class="btn btn-primary hidden">
+            Continuer l'aventure
+        </button>
+    </div>
+</section>

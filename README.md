@@ -1,116 +1,165 @@
-# 💌 4 mois avec Marine — mini-aventure interactive
+# 🎁 Cadeau Marine — 4 mois ensemble
 
-Site 100% HTML/CSS/JS vanilla : énigme secrète **aléatoire sur le thème
-de l'Attaque des Titans** 🗝️, Mini Anto-Man, question impossible,
-**roue du destin amoureux** 🎡 (avec relance garantie), **Antoine &
-Marine Simulator** 🎮 (quêtes, Love XP, déblocage de Kirikou), 5 quiz
-absurdes, jauge de progression et fin pluie-de-cœurs ❤️.
+Un site interactif fait avec amour. Aucune dépendance externe, aucun build.
 
-Aucune dépendance externe, aucun framework, aucune image requise.
+---
 
-## 📁 Fichiers
+## 🚀 Lancement
+
+Le projet utilise `fetch()` pour charger les fragments HTML, ce qui nécessite un **serveur local** (les navigateurs
+bloquent les requêtes `file://`).
+
+### Option 1 — VS Code (recommandée)
+
+1. Installer l'extension **Live Server**
+2. Clic droit sur `index.html` → **Open with Live Server**
+
+### Option 2 — Terminal
+
+```bash
+# Python (disponible sur macOS/Linux par défaut)
+python3 -m http.server 8080
+# puis ouvrir http://localhost:8080
+
+# Node.js
+npx serve .
+```
+
+### Option 3 — Tout-en-un sans serveur
+
+> Pour offrir le cadeau sans contrainte technique, utilise la version
+> **`standalone/index.html`** (générée séparément, tout inline).
+> Double-clic → ça marche directement.
+
+---
+
+## 🗺️ Parcours de l'expérience
 
 ```
-index.html          → structure du site
-style.css           → couleurs, mise en page, animations
-script.js           → toute la logique (mot de passe, roue, simulateur, quiz, jauge...)
-Cadeau Marine.html  → la même chose, mais tout fusionné dans UN seul fichier
-README.md           → ce fichier
+🗝️  Mot de passe (énigme Attaque des Titans, aléatoire)
+ ↓
+💌  Accueil
+ ↓
+💘  Question impossible (bouton "Non" qui s'enfuit)
+ ↓
+🎡  Roue du destin amoureux
+ ├── 🎮  Simulator (6 quêtes + déblocage Kirikou)
+ │    └──→ 🌹 Quiz politique
+ └──→ 🌹  Quiz politique (chemin direct)
+           ↓
+          🧟  Walking Dead
+           ↓
+          🍝  Test Italiano
+           ↓
+          🌊  Quiz Océane
+           ↓
+          👀  Quiz Sœur
+           ↓
+          ❤️  Fin romantique
 ```
 
-`Cadeau Marine.html` est 100% autonome (CSS + JS inclus) : tu peux
-l'ouvrir directement en double-cliquant, l'envoyer par mail, etc. Les 3
-fichiers séparés sont pratiques pour continuer à coder dans VS Code.
+---
+
+## 📁 Structure du projet
+
+```
+index.html                  ← Point d'entrée (60 lignes)
+
+css/
+├── style.css               ← Composants & layout (variables uniquement, pas de couleurs)
+└── themes/
+    └── rose-violet.css     ← 🎨 Thème actif — changer ici pour recolorer tout le site
+
+sections/                   ← Un fichier HTML par écran/groupe logique
+├── lock.html               ← Mot de passe
+├── home.html               ← Accueil
+├── impossible.html         ← Question impossible
+├── wheel.html              ← Roue du destin
+├── simulator.html          ← Antoine & Marine Simulator
+├── quizzes.html            ← Les 5 quiz (politique, TWD, italie, ocean, soeur)
+└── ending.html             ← Fin romantique
+
+shared/
+├── chrome.html             ← Éléments persistants (jauge, guide, toolbar, hearts)
+└── head.html               ← Fragment <head> (référence documentaire)
+
+js/
+├── config.js               ← ⭐ TOUT le contenu modifiable (énigmes, quiz, quêtes…)
+├── storage.js              ← localStorage centralisé
+├── state.js                ← État global
+├── gauge.js                ← Jauge de progression
+├── guide.js                ← Mini Anto-Man
+├── navigation.js           ← goToSection()
+├── password.js             ← Écran mot de passe
+├── impossible.js           ← Bouton "Non" qui fuit
+├── wheel.js                ← Roue du destin
+├── simulator.js            ← Quêtes + Love XP + Kirikou
+├── quiz.js                 ← Moteur de quiz générique
+├── ending.js               ← Pluie de cœurs
+└── app.js                  ← Bootstrap : charge les fragments, init les modules
+```
 
 ---
 
-## 1. Ouvrir dans Visual Studio Code
+## 🎨 Changer le thème
 
-*Fichier → Ouvrir le dossier...* et choisis le dossier contenant ces
-fichiers. Tout est déjà prêt, pas d'installation supplémentaire.
+1. Copier `css/themes/rose-violet.css` → `css/themes/mon-theme.css`
+2. Modifier les variables CSS (`--color-primary`, `--color-bg-start`, etc.)
+3. Dans `index.html`, remplacer :
+   ```html
+   <link rel="stylesheet" href="css/themes/rose-violet.css">
+   ```
+   par :
+   ```html
+   <link rel="stylesheet" href="css/themes/mon-theme.css">
+   ```
 
-## 2. Lancer avec Live Server
-
-1. Onglet **Extensions** (`Ctrl+Shift+X`) → installe **"Live Server"**.
-2. Ouvre `index.html`.
-3. Clic droit → **"Open with Live Server"** (ou bouton "Go Live").
-
-`Cadeau Marine.html` fonctionne aussi avec Live Server, ou même en
-double-clic direct sans serveur.
-
----
-
-## 3. Le parcours (vue d'ensemble)
-
-1. 🗝️ **Mot de passe secret** — une énigme Attaque des Titans est tirée
-   au hasard à CHAQUE chargement de page (Eren, Mikasa, Levi, Armin ou
-   Erwin). Le prénom du personnage est la réponse, insensible à la
-   casse. Indices progressifs en cas d'erreur.
-2. 💌 Accueil
-3. 💘 Question impossible — le bouton "Non" fuit, "Oui évidemment" continue
-4. 🎡 **Roue du destin amoureux** — tirage au sort entre :
-   - 🎮 **Antoine & Marine Simulator**
-   - ❓ **Quiz Direct** (le simulateur est sauté)
-
-   Après un 1er résultat, le bouton devient **"🎲 Relancer la roue"** :
-   Marine peut retenter sa chance autant qu'elle veut. **Garantie** :
-   si le 1er tirage n'est pas "Simulator", le 2ᵉ tirage tombera
-   forcément sur "Simulator".
-5. Si Simulator : 3 personnages (Antoine, Marine, Kirikou verrouillé),
-   6 quêtes → Love XP → déblocage de Kirikou + badge "Famille du chaos
-   tendre"
-6. Les 5 quiz (politique, Walking Dead, Italie, **Océane**, sœur)
-7. ❤️ Fin romantique — pluie de cœurs, jauge à 100%
+Tout le site se recolore instantanément — `css/style.css` ne contient aucune couleur en dur.
 
 ---
 
-## 4. Personnaliser
+## ✏️ Modifier le contenu
 
-Tout est commenté. Les textes "fixes" (titres, sous-titres, paragraphes)
-sont dans `index.html`. La logique et les contenus "dynamiques" sont en
-haut de `script.js`, section **"1. CONFIGURATION"** :
+**Tout se passe dans `js/config.js`.**
 
-- `PASSWORD_RIDDLES` → la liste des énigmes Attaque des Titans (une
-  tirée au hasard à chaque chargement). Chaque entrée a un texte
-  d'énigme, une réponse (`answer`), et 5 indices progressifs. Pour
-  ajouter un personnage, ajoute un objet avec la même structure.
-- `GUIDE_MESSAGES` → toutes les répliques de Mini Anto-Man
-- `WHEEL_SEGMENTS` → l'ordre des 6 secteurs de la roue (3 "simulator" /
-  3 "quiz" en alternance par défaut — garde un nombre pair de secteurs)
-- `SIMULATOR_QUESTS` → les 6 quêtes (titre + réplique de Mini Anto-Man
-  affichée quand la quête est terminée). Pour en ajouter/retirer une,
-  ajoute aussi le `<li class="quest-item" data-quest="...">`
-  correspondant dans `index.html` (même clé `key`)
-- `MARINE_LINES` / `MARINE_COMMENT_CHANCE` → les répliques aléatoires de
-  Marine ("Vive les gros nichons.") et leur probabilité d'apparition
-  (40% par défaut, après chaque quête)
-- `KIRIKOU_DIALOGUE` → le petit échange affiché au déblocage de Kirikou
-- `QUIZZES` → les 5 quiz (questions, options, message de résultat)
+### Énigmes du mot de passe
 
-⚠️ Si tu modifies `index.html` ou `script.js`, pense à régénérer
-`Cadeau Marine.html` (ou à reporter le changement dans les deux), sinon
-les deux versions divergent.
+```js
+// PASSWORD_RIDDLES — tableau d'objets { riddle, answer, hints }
+// L'énigme est tirée au sort à chaque chargement.
+```
 
----
+### Messages du guide (Mini Anto-Man)
 
-## 5. Jauge, sauvegarde et reset
+```js
+const GUIDE_MESSAGES = { passwordSuccess: "…", noButtonFlee: "…", … };
+```
 
-La jauge **"Vive Marine"** compte 9 étapes de base (mot de passe,
-question impossible, roue, 5 quiz, fin), +6 si la roue tombe sur le
-Simulator (une par quête). Dans les deux cas, terminer le parcours
-amène à 100% et affiche "VIVE MARINE, VIVE GROGNICHON, VIVE NOUS."
+### Quêtes du simulateur
 
-La progression (mot de passe validé, tirages de la roue, quêtes, quiz,
-Kirikou...) est sauvegardée automatiquement via `localStorage` : un
-rechargement de page reprend exactement où Marine s'est arrêtée — sauf
-l'énigme du mot de passe, qui est retirée au hasard à chaque
-chargement (donc différente si le mot de passe n'a pas encore été
-trouvé et que la page est rechargée). Le bouton **"🔄 Recommencer"**
-efface tout et repart du mot de passe.
+```js
+// 1. Ajouter dans SIMULATOR_QUESTS
+{
+    key: "quest7", title
+:
+    "Ma quête", guideMessage
+:
+    "Réaction du guide."
+}
+// 2. Ajouter le <li data-quest="quest7"> dans sections/simulator.html
+```
 
-Le bouton **"Masquer/Afficher Mini Anto-Man"** cache ou montre le petit
-personnage guide à tout moment, sans perdre la progression.
+### Questions de quiz
+
+```js
+// QUIZZES.politique.questions (ou twd, italie, ocean, soeur)
+{ question: "Ma question ?", options: ["A", "B", "C"] }
+```
 
 ---
 
-Bonne fête des 4 mois à vous deux 💌
+## 💾 Sauvegarde & réinitialisation
+
+- Progression sauvegardée **automatiquement** (localStorage).
+- Bouton **🔄 Recommencer** en haut à droite pour tout effacer.
+- Navigation privée : fonctionne sans sauvegarde entre sessions.

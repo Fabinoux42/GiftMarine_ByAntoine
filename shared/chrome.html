@@ -1,0 +1,50 @@
+<!-- ================================================================
+     shared/chrome.html — Éléments persistants de l'UI
+     Présents en permanence, quelle que soit la section active :
+       - Jauge de progression verticale
+       - Mini Anto-Man (guide)
+       - Barre d'outils (toggle guide + reset)
+       - Conteneur de la pluie de cœurs (fin)
+================================================================ -->
+
+<!-- Jauge de progression -->
+<div
+        id="progress-gauge"
+        class="progress-gauge"
+        role="progressbar"
+        aria-label="Progression de l'aventure"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+>
+    <div class="gauge-track">
+        <div id="gauge-fill" class="gauge-fill"></div>
+    </div>
+    <span id="gauge-label" class="gauge-label">0%</span>
+</div>
+
+<!-- Mini Anto-Man -->
+<div id="guide-wrapper" class="guide-wrapper">
+    <div id="guide-bubble" class="guide-speech-bubble" aria-live="polite"></div>
+    <div class="guide-character" aria-hidden="true">
+        <div class="guide-mask">
+            <span class="guide-eye guide-eye-left"></span>
+            <span class="guide-eye guide-eye-right"></span>
+        </div>
+        <span class="guide-mouth"></span>
+    </div>
+</div>
+
+<!-- Barre d'outils -->
+<div class="toolbar">
+    <button id="toggle-guide-btn" type="button" class="btn btn-ghost">
+        Masquer Mini Anto-Man
+    </button>
+    <button id="reset-btn" type="button" class="btn btn-ghost"
+            title="Recommencer toute l'expérience depuis le mot de passe">
+        🔄 Recommencer
+    </button>
+</div>
+
+<!-- Pluie de cœurs (fin romantique) -->
+<div id="hearts-container" aria-hidden="true"></div>
